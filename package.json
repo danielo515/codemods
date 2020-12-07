@@ -9,13 +9,14 @@
     "src"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielo515/codemods.git"
   },
-  "bin": "jscodeshift -t src/",
+  "bin": "src/bin/cli.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,5 +26,8 @@
   "homepage": "https://github.com/danielo515/codemods#readme",
   "dependencies": {
     "jscodeshift": "^0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.15.0"
   }
 }
