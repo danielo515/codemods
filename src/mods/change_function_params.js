@@ -1,3 +1,4 @@
+const findArrowName = (path) => path.parent.value.id?.name;
 module.exports = function (file, api, options) {
     const j = api.jscodeshift;
     const { functionName, maxParams } = options;
@@ -8,23 +9,24 @@ module.exports = function (file, api, options) {
     const root = j(file.source);
     return root
         .find(j.ArrowFunctionExpression)
-        .filter((path) => path.parent.value.id?.name === functionName)
+        .filter((path) => findArrowName(path) === functionName)
         .forEach((path) => {
             const paramNames = path.node.params.map((x) =>
                 j.identifier(x.name)
             );
+            const name = findArrowName(path);
             const params = paramNames.map((x) => {
                 const a = j.objectProperty(x, x);
                 a.shorthand = true;
                 return a;
             });
             path.node.params = [j.objectPattern(params)];
+            api.report(`changing all call occurrences of ${name}`);
             //Now replace all calls
             root.find(j.CallExpression)
-                .filter((x) => x.node.callee.name === 'mapPayBlock')
+                .filter((x) => x.node.callee.name === name)
                 .forEach(({ node }) => {
                     const args = node.arguments;
-                    console.log(args);
                     node.arguments = [
                         j.objectExpression(
                             args.map((arg, i) =>
