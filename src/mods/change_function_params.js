@@ -40,7 +40,7 @@ module.exports = function (file, api, options) {
     const root = j(file.source);
     return root
         .find(j.ArrowFunctionExpression)
-        .filter(filter)
+        .filter((arg) => findArrowName(arg) && filter(arg))
         .forEach((path) => {
             const paramNames = path.node.params.map((x) =>
                 j.identifier(x.name)
@@ -50,7 +50,7 @@ module.exports = function (file, api, options) {
             api.report(`changing all call occurrences of ${name}`);
             //Now replace all calls
             root.find(j.CallExpression)
-                .filter((x) => x.node.callee.name === name)
+                .filter((x) => name && x.node.callee.name === name)
                 .forEach(({ node }) => {
                     const args = node.arguments;
                     node.arguments = [
