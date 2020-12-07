@@ -1,9 +1,36 @@
 const findArrowName = (path) => path.parent.value.id?.name;
+
+/**
+ *
+ * @param {import('jscodeshift').FileInfo} file
+ * @param {import('jscodeshift').API} api
+ * @param {import('jscodeshift').Options} options
+ */
 module.exports = function (file, api, options) {
     const j = api.jscodeshift;
-    const { functionName, maxParams } = options;
-    if (!functionName && !maxParams) {
-        api.report('You must provide a function name or a max-params options');
+    /**
+     * Given a list of argument names, and argument values collapse them
+     * to an object call.
+     * The list of argValues should be same length or less as the list of argNames.
+     * Because the variadic nature of JS we match call-site arguments with expected argNames
+     * @param {{argNames: import('jscodeshift').Identifier[], argValues: any[]}} options
+     */
+    const argumentsToObject = ({ argNames, argValues }) =>
+        j.objectExpression(
+            argValues.map((value, i) => j.objectProperty(argNames[i], value))
+        );
+
+    /**
+     * Creates a shorthand version of an objectProperty
+     * @param {import('jscodeshift').Identifier} identifier
+     * @returns {import('jscodeshift').ObjectProperty}
+     */
+    const shortProperty = (identifier) => {
+        return { ...j.objectProperty(identifier, identifier), shorthand: true };
+    };
+    const { functionName, maxArgs } = options;
+    if (!functionName && !maxArgs) {
+        api.report('You must provide either functionName or a maxArgs options');
         return file.source;
     }
     const root = j(file.source);
@@ -15,12 +42,7 @@ module.exports = function (file, api, options) {
                 j.identifier(x.name)
             );
             const name = findArrowName(path);
-            const params = paramNames.map((x) => {
-                const a = j.objectProperty(x, x);
-                a.shorthand = true;
-                return a;
-            });
-            path.node.params = [j.objectPattern(params)];
+            path.node.params = [j.objectPattern(paramNames.map(shortProperty))];
             api.report(`changing all call occurrences of ${name}`);
             //Now replace all calls
             root.find(j.CallExpression)
@@ -28,11 +50,10 @@ module.exports = function (file, api, options) {
                 .forEach(({ node }) => {
                     const args = node.arguments;
                     node.arguments = [
-                        j.objectExpression(
-                            args.map((arg, i) =>
-                                j.objectProperty(paramNames[i], arg)
-                            )
-                        ),
+                        argumentsToObject({
+                            argNames: paramNames,
+                            argValues: args,
+                        }),
                     ];
                 });
         })
