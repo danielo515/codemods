@@ -1,4 +1,5 @@
 const findArrowName = (path) => path.parent.value.id?.name;
+// const tap = (fn) => (arg) => console.log(arg) || fn(arg);
 
 /**
  *
@@ -33,10 +34,13 @@ module.exports = function (file, api, options) {
         api.report('You must provide either functionName or a maxArgs options');
         return file.source;
     }
+    const filter = functionName
+        ? (path) => findArrowName(path) === functionName
+        : (path) => path.node.params.length > Number(maxArgs);
     const root = j(file.source);
     return root
         .find(j.ArrowFunctionExpression)
-        .filter((path) => findArrowName(path) === functionName)
+        .filter(filter)
         .forEach((path) => {
             const paramNames = path.node.params.map((x) =>
                 j.identifier(x.name)
