@@ -1,9 +1,14 @@
-module.exports = function (file, api) {
+module.exports = function (file, api, options) {
     const j = api.jscodeshift;
+    const { functionName, maxParams } = options;
+    if (!functionName && !maxParams) {
+        api.report('You must provide a function name or a max-params options');
+        return file.source;
+    }
     const root = j(file.source);
     return root
         .find(j.ArrowFunctionExpression)
-        .filter((path) => path.parent.value.id?.name === 'mapPayBlock')
+        .filter((path) => path.parent.value.id?.name === functionName)
         .forEach((path) => {
             const paramNames = path.node.params.map((x) =>
                 j.identifier(x.name)
