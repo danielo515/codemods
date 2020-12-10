@@ -7,7 +7,7 @@ Please check the documentation for each codemod to understand what it is suppose
 
 ### named-function-params
 
-Replace all function (with a name) definitions and calls to take named arguments instead of positional ones.
+Replace all functions (with a name) definitions and calls to take named arguments instead of positional ones.
 Turns:
 
 ```js
@@ -22,6 +22,29 @@ const add = ({ a, b }) => a + b
 add({a: 1, b: 2 })
 ```
 
+#### Arguments
 It accepts either :
 - `--functionName=name` where name is the function name you want to refactor
 - `--maxArgs=2` where 2 can be any number that you want to use as threshold to decide if a function needs to be refactored or not
+
+### react-to-object
+
+Turns an array of react components into an array of Objects. This only works for literal lists of react components:
+
+```js
+[
+    <MyStuff value="hello" onClick={() => console.log('clicked')}>
+]
+```
+into:
+
+```js
+[{
+    value: "hello",
+    onClick: () => console.log('clicked')
+}]
+```
+
+#### Arguments
+It accepts:
+- `--name=component_name` where component name is the  component you want to translate to objects
