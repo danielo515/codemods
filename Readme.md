@@ -3,6 +3,15 @@ This is a collection of [ codemods ](https://github.com/facebook/codemod) design
 Codemods here will re-factor pieces of javascript code to adhere to certain programming practices that I think are better than others.
 Please check the documentation for each codemod to understand what it is supposed to do.
 
+## Executing codemods
+You don't need to install this library to force your code to follow my fantastic impositions, all you need is to have npm installed and run the following command
+
+```bash
+npx danielo-mod mod-name --firstArgument=value --parser=flow your/source/code/path
+```
+
+If you don't use flow, just remove `--parser=flow`
+
 ## CODEMODS
 
 ### named-function-params
@@ -51,3 +60,8 @@ It accepts:
 ### add-react-property
 
 Adds a new react property if it does not exist previously. Useful if you want to deprecate default values, so you can add the default value to all existing invocdations.
+
+#### Arguments
+- `--name=component_name` the name of the component you want to add properties to
+- `--propName=name` the name of the property you want to add
+- `--propValue=value` the value of the property you want to add
