@@ -44,7 +44,10 @@ into:
     onClick: () => console.log('clicked')
 }]
 ```
-
 #### Arguments
 It accepts:
 - `--name=component_name` where component name is the  component you want to translate to objects
+
+### add-react-property
+
+Adds a new react property if it does not exist previously. Useful if you want to deprecate default values, so you can add the default value to all existing invocdations.
