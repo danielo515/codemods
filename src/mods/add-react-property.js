@@ -31,10 +31,10 @@ module.exports = function transformer(file, api, options) {
         })
         .forEach((path) => {
             const attributes = path.get('attributes');
-            const hasVariant = attributes.value.some(
-                ({ name }) => name === propName
+            const hasProp = attributes.value.some(
+                ({ name: { name } }) => name === propName
             );
-            if (!hasVariant)
+            if (!hasProp)
                 attributes.value.push(
                     j.jsxAttribute(
                         j.jsxIdentifier(propName),
