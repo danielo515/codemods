@@ -32,7 +32,7 @@ module.exports = function transformer(file, api, options) {
         .forEach((path) => {
             const attributes = path.get('attributes');
             const hasProp = attributes.value.some(
-                ({ name: { name } }) => name === propName
+                ({ name }) => name && name.name === propName
             );
             if (!hasProp)
                 attributes.value.push(
