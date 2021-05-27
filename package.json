@@ -25,9 +25,32 @@
     },
     "homepage": "https://github.com/danielo515/codemods#readme",
     "dependencies": {
-        "jscodeshift": "^0.11.0"
+        "jscodeshift": "^0.12.0"
     },
     "devDependencies": {
-        "eslint": "^7.15.0"
+        "@types/jest": "^26.0.23",
+        "@types/jscodeshift": "^0.11.0",
+        "eslint": "^7.15.0",
+        "jest": "^27.0.1",
+        "ts-jest": "^27.0.1",
+        "typescript": "^4.3.2",
+        "@babel/core": "^7.12.7",
+        "@babel/parser": "^7.12.10",
+        "@babel/preset-env": "^7.12.7",
+        "@babel/preset-typescript": "^7.12.7",
+        "@types/tar": "^4.0.4",
+        "@typescript-eslint/eslint-plugin": "^1.4.2",
+        "@typescript-eslint/parser": "^1.4.2",
+        "babel-loader": "^8.0.6",
+        "eslint-config-prettier": "^4.1.0",
+        "eslint-plugin-prettier": "^3.0.1",
+        "jest-serializer-html-string": "^1.0.1",
+        "jest-watch-typeahead": "^0.4.2",
+        "prettier": "^1.16.4",
+        "rimraf": "^2.6.3",
+        "semver": "^7.3.5",
+        "tar": "^6.1.0",
+        "ts-loader": "^6.2.1",
+        "ts-node": "^9.1.1"
     }
 }
