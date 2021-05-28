@@ -12,4 +12,5 @@ const { defineTest } = require('jscodeshift/dist/testUtils');
 //     });
 // });
 
-defineTest(__dirname, 'collect-gql-queries', {}, 'inlined-graphql');
+defineTest(__dirname, 'collect-gql-queries', {}, 'graphql-with-fragment');
+defineTest(__dirname, 'collect-gql-queries', {}, 'graphql-single-query');

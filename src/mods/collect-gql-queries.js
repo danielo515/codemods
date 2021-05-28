@@ -1,5 +1,27 @@
 const fs = require('fs-extra');
 const path = require('path');
+
+/**
+ * Finds the import statements of the gql dependency
+ * Removes other imports and returns it as source.
+ * Make sure to only call if there is a graphql import, otherwise it may throw
+ * @param {string} source
+ * @param {import('jscodeshift').JSCodeshift} j
+ * @returns string
+ */
+function findGraphqlDependency(source, j, importName = 'gql') {
+    const declaration = j(source)
+        .find(j.ImportDeclaration, {
+            specifiers: [{ imported: { name: importName } }]
+        })
+        .get();
+    return j(declaration)
+        .find(j.ImportSpecifier)
+        .filter(path => path.node.imported.name !== importName)
+        .remove()
+        .toSource();
+}
+
 /**
  * Collect all calls to gql on a file to a sibling file
  * and add imports for them in place
@@ -10,18 +32,21 @@ const path = require('path');
 module.exports = function transformer(fileInfo, api, options) {
     const j = api.jscodeshift;
     const report = api.report || console.info;
+    const log = (message, level = 1) => {
+        if (options.verbose >= level) report(message);
+    };
 
     const root = j(fileInfo.source);
 
     if (!options.name) {
-        report('Target file name not provided, using default of graphql.js');
+        log('Target file name not provided, using default of graphql.js', 2);
     }
 
     const targetFilename = options.name || 'graphql.js';
 
     if (fileInfo.path.endsWith(targetFilename)) {
-        report('Omit ' + fileInfo.path);
-        return;
+        log('Omit ' + fileInfo.path, 2);
+        return; // reported as skipped
     }
 
     const allQueriesOnDocument = root.find(j.TaggedTemplateExpression, {
@@ -32,7 +57,7 @@ module.exports = function transformer(fileInfo, api, options) {
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
     // Any dependency the queries may have, like an imported fragment
-    const dependencies = [];
+    const dependencies = [findGraphqlDependency(fileInfo.source, j)];
     // I don't like this, but this seems to be the only way to "collect stuff"
     allQueriesOnDocument.forEach(query => {
         const parent = query.parent;
@@ -40,7 +65,7 @@ module.exports = function transformer(fileInfo, api, options) {
         importNames.push(j.importSpecifier(j.identifier(varName)));
         // parent.parent because parent is just a declarator, and we want the whole declaration!
         queriesToExport.push(j(parent.parent).toSource());
-        dependencies.push(
+        dependencies.concat(
             j(query)
                 .find(j.TemplateLiteral)
                 .find(j.Identifier)
@@ -70,7 +95,7 @@ module.exports = function transformer(fileInfo, api, options) {
     );
 
     // If no queries found, skip code generation
-    if (queriesToExport.length === 0) return;
+    if (queriesToExport.length === 0) return root.toSource();
 
     // Write te exported queries to the target destination
     fs.writeFileSync(
