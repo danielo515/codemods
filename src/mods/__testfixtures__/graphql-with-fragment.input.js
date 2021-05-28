@@ -1,20 +1,20 @@
 // @flow
 import { gql } from 'components/GraphQL';
-import { COMPANY_FRAGMENT } from './fragments';
+import { USER_FRAGMENT } from './fragments';
 
-const COMPANY_VIEW_QUERY = gql`
+const USER_QUERY = gql`
     query companyViewQuery($companyID: ID) {
         viewer {
             id
             company(id: $companyID) {
-                ...CompanyFragment
+                ...UserFragment
             }
         }
     }
-    ${COMPANY_FRAGMENT}
+    ${USER_FRAGMENT}
 `;
 
 export default function Test() {
-    const query = useQuery(COMPANY_VIEW_QUERY);
+    const query = useQuery(USER_QUERY);
     return <div></div>;
 }
