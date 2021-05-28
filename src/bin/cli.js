@@ -21,12 +21,15 @@ const [modName, ...restArgs] = args;
 
 const modsDir = join(__dirname, '../mods');
 const listOfMods = readdirSync(modsDir);
-const modNames = listOfMods.map((name) => name.replace('.js', ''));
+// index by Name => fileName
+const availableMods = new Map(
+    listOfMods.map((name) => [name.replace(/\.(j|t)s$/, ''), name])
+);
 
-if (!modNames.includes(modName)) {
+if (!availableMods.has(modName)) {
     console.log(
         `Unknown mod, please use one of the following: 
-    ${modNames.join('\n')}`
+    ${Array.from(availableMods).join('\n')}`
     );
     exit(1);
 }
@@ -34,7 +37,11 @@ let output;
 try {
     output = spawnSync(
         join(__dirname, '../../node_modules/jscodeshift/bin/jscodeshift.js'),
-        ['-t', require.resolve(`../mods/${modName}.js`), ...restArgs]
+        [
+            '-t',
+            require.resolve(`../mods/${availableMods.get(modName)}`),
+            ...restArgs,
+        ]
     );
 } catch (e) {
     console.log(e, output);
