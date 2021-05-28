@@ -9,8 +9,9 @@
         "src"
     ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "eslint src"
+        "test": "jest src",
+        "lint": "eslint src",
+        "execute": "node src/bin/cli.js"
     },
     "repository": {
         "type": "git",

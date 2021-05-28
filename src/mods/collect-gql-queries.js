@@ -21,6 +21,7 @@ module.exports = function transformer(fileInfo, api, options) {
 
     if (fileInfo.path.endsWith(targetFilename)) {
         report('Omit ' + fileInfo.path);
+        return;
     }
 
     const allQueriesOnDocument = root.find(j.TaggedTemplateExpression, {
@@ -67,6 +68,9 @@ module.exports = function transformer(fileInfo, api, options) {
         path.dirname(fileInfo.path),
         targetFilename
     );
+
+    // If no queries found, skip code generation
+    if (queriesToExport.length === 0) return;
 
     // Write te exported queries to the target destination
     fs.writeFileSync(
