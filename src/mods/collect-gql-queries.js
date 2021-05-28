@@ -23,6 +23,16 @@ function findGraphqlDependency(source, j, importName = 'gql') {
 }
 
 /**
+ *
+ * Transform a variable declaration node into a exportStatement path
+ * @param {import('jscodeshift').VariableDeclaration} node
+ * @param {import('jscodeshift').JSCodeshift} j
+ */
+function exportStatement(node, j) {
+    return j(j.exportNamedDeclaration(node));
+}
+
+/**
  * Collect all calls to gql on a file to a sibling file
  * and add imports for them in place
  * @param {import('jscodeshift').FileInfo} fileInfo
@@ -57,14 +67,15 @@ module.exports = function transformer(fileInfo, api, options) {
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
     // Any dependency the queries may have, like an imported fragment
-    const dependencies = [findGraphqlDependency(fileInfo.source, j)];
+    const dependencies = [findGraphqlDependency(fileInfo.source, j), ''];
     // I don't like this, but this seems to be the only way to "collect stuff"
     allQueriesOnDocument.forEach(query => {
         const parent = query.parent;
         const varName = parent.node.id.name;
         importNames.push(j.importSpecifier(j.identifier(varName)));
         // parent.parent because parent is just a declarator, and we want the whole declaration!
-        queriesToExport.push(j(parent.parent).toSource());
+        queriesToExport.push(exportStatement(parent.parent.node, j).toSource());
+        // Look for dependencies inside the string template, like fragments
         dependencies.concat(
             j(query)
                 .find(j.TemplateLiteral)
