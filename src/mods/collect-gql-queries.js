@@ -45,9 +45,11 @@ module.exports = function transformer(fileInfo, api, options) {
                 .find(j.Identifier)
                 .paths()
                 .map(identifier => {
-                    return root.find(j.ImportSpecifier, {
-                        imported: { name: identifier.node.name }
-                    });
+                    return root
+                        .find(j.ImportSpecifier, {
+                            imported: { name: identifier.node.name }
+                        })
+                        .toSource();
                 })
         );
         // Remove each variable declaration because we will compile them all to a single import
