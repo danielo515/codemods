@@ -9,7 +9,7 @@ const { describe } = require('jscodeshift-helper');
  * @param {string} source
  * @param {import('jscodeshift').JSCodeshift} j
  */
-function findGraphqlDependency(source, j, importName = 'gql') {
+function getGraphqlDependency(source, j, importName = 'gql') {
     const declaration = j(
         j(source)
             .find(j.ImportDeclaration, {
@@ -37,6 +37,17 @@ function exportStatement(node, j) {
 }
 
 /**
+ *
+ *
+ * @param {import('jscodeshift').ASTPath<*>} path
+ */
+function removePreservingComments(path) {
+    const comments = path.node.comments;
+    if (comments && comments.length) path.parent.node.comments = comments;
+    path.prune();
+}
+
+/**
  * Removes elements from an import
  * if the final import is empty, also removes it
  * @param {import('jscodeshift').Collection<ImportDeclaration>} importPath
@@ -52,7 +63,7 @@ function removeFromImport(importPath, nameToRemove, j) {
         .filter(
             importDeclaration => importDeclaration.node.specifiers.length === 0
         )
-        .remove();
+        .forEach(removePreservingComments);
 }
 
 const defaultOutputName = 'graphql.js';
@@ -90,7 +101,7 @@ module.exports = function transformer(fileInfo, api, options) {
     const allQueriesOnDocument = root.find(j.TaggedTemplateExpression, {
         tag: { name: 'gql' }
     });
-    const gqlDependency = findGraphqlDependency(fileInfo.source, j);
+    const gqlDependency = getGraphqlDependency(fileInfo.source, j);
     // The queries as imports once you remove them from the document
     const importNames = [];
     // The body of the queries we want to move to a new file
