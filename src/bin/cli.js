@@ -20,7 +20,9 @@ if (args.length < 1) {
 const [modName, ...restArgs] = args;
 
 const modsDir = join(__dirname, '../mods');
-const listOfMods = readdirSync(modsDir);
+const listOfMods = readdirSync(modsDir).filter(
+    (filename) => !filename.startsWith('__')
+);
 // index by Name => fileName
 const availableMods = new Map(
     listOfMods.map((name) => [name.replace(/\.(j|t)s$/, ''), name])
@@ -28,8 +30,10 @@ const availableMods = new Map(
 
 if (!availableMods.has(modName)) {
     console.log(
-        `Unknown mod, please use one of the following: 
-    ${Array.from(availableMods).join('\n')}`
+        `Unknown mod, please use one of the following:\n - ${Array.from(
+            availableMods,
+            ([name]) => name
+        ).join('\n - ')}`
     );
     exit(1);
 }
