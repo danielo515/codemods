@@ -2742,6 +2742,11 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jscodeshift-helper@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jscodeshift-helper/-/jscodeshift-helper-1.1.0.tgz#7ed28b576021517452b938ee02e4edc799c1cbf7"
+  integrity sha1-ftKLV2AhUXRSuTjuAuTtx5nBy/c=
+
 jscodeshift@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/jscodeshift/-/jscodeshift-0.11.0.tgz#4f95039408f3f06b0e39bb4d53bc3139f5330e2f"

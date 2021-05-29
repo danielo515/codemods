@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
+const { describe } = require('jscodeshift-helper');
 
 /**
  * Finds the import statements of the gql dependency
@@ -7,30 +8,54 @@ const path = require('path');
  * Make sure to only call if there is a graphql import, otherwise it may throw
  * @param {string} source
  * @param {import('jscodeshift').JSCodeshift} j
- * @returns string
  */
 function findGraphqlDependency(source, j, importName = 'gql') {
-    const declaration = j(source)
-        .find(j.ImportDeclaration, {
-            specifiers: [{ imported: { name: importName } }]
-        })
-        .get();
-    return j(declaration)
+    const declaration = j(
+        j(source)
+            .find(j.ImportDeclaration, {
+                specifiers: [{ imported: { name: importName } }]
+            })
+            .get()
+    );
+    declaration
         .find(j.ImportSpecifier)
         .filter(path => path.node.imported.name !== importName)
-        .remove()
-        .toSource();
+        .remove();
+    return declaration;
 }
 
+/** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
+/** @typedef {import('jscodeshift').JSCodeshift} JSCodeshift */
 /**
  *
  * Transform a variable declaration node into a exportStatement path
  * @param {import('jscodeshift').VariableDeclaration} node
- * @param {import('jscodeshift').JSCodeshift} j
+ * @param {JSCodeshift} j
  */
 function exportStatement(node, j) {
     return j(j.exportNamedDeclaration(node));
 }
+
+/**
+ * Removes elements from an import
+ * if the final import is empty, also removes it
+ * @param {import('jscodeshift').Collection<ImportDeclaration>} importPath
+ * @param {string} nameToRemove
+ * @param {JSCodeshift} j
+ */
+function removeFromImport(importPath, nameToRemove, j) {
+    importPath
+        .find(j.ImportSpecifier, { imported: { name: nameToRemove } })
+        .remove();
+    // describe(importPath);
+    return importPath
+        .filter(
+            importDeclaration => importDeclaration.node.specifiers.length === 0
+        )
+        .remove();
+}
+
+const defaultOutputName = 'graphql.js';
 
 /**
  * Collect all calls to gql on a file to a sibling file
@@ -49,10 +74,13 @@ module.exports = function transformer(fileInfo, api, options) {
     const root = j(fileInfo.source);
 
     if (!options.name) {
-        log('Target file name not provided, using default of graphql.js', 2);
+        log(
+            `Target file name not provided, using default of ${defaultOutputName}`,
+            2
+        );
     }
 
-    const targetFilename = options.name || 'graphql.js';
+    const targetFilename = options.name || defaultOutputName;
 
     if (fileInfo.path.endsWith(targetFilename)) {
         log('Omit ' + fileInfo.path, 2);
@@ -62,12 +90,13 @@ module.exports = function transformer(fileInfo, api, options) {
     const allQueriesOnDocument = root.find(j.TaggedTemplateExpression, {
         tag: { name: 'gql' }
     });
+    const gqlDependency = findGraphqlDependency(fileInfo.source, j);
     // The queries as imports once you remove them from the document
     const importNames = [];
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
     // Any dependency the queries may have, like an imported fragment
-    const dependencies = [findGraphqlDependency(fileInfo.source, j), ''];
+    const dependencies = [gqlDependency.toSource(), ''];
     // I don't like this, but this seems to be the only way to "collect stuff"
     allQueriesOnDocument.forEach(query => {
         const parent = query.parent;
@@ -96,7 +125,7 @@ module.exports = function transformer(fileInfo, api, options) {
     });
     const importQueriesStatement = j.importDeclaration(
         importNames,
-        j.stringLiteral(`./${targetFilename}`),
+        j.stringLiteral(`./${targetFilename.replace(/\.(t|j)s$/, '')}`),
         'value'
     );
 
@@ -108,15 +137,29 @@ module.exports = function transformer(fileInfo, api, options) {
     // If no queries found, skip code generation
     if (queriesToExport.length === 0) return root.toSource();
 
+    //===== File Generation=====
     // Write te exported queries to the target destination
     fs.writeFileSync(
         destinationFile,
         [...dependencies, ...queriesToExport].join('\n')
     );
 
-    return root
-        .find(j.ImportDeclaration)
+    root.find(j.ImportDeclaration)
         .at(0)
-        .insertAfter(importQueriesStatement)
-        .toSource();
+        .insertBefore(importQueriesStatement);
+
+    //===== Cleanup =====
+    return removeFromImport(root.find(j.ImportDeclaration), 'gql', j).toSource({
+        quote: 'single'
+    });
 };
+
+// return root
+//     .find(j.ImportDeclaration)
+//     .map(Import => {
+//         Import.value.specifiers = Import.value.specifiers.filter(
+//             sp => sp.imported.name !== 'gql'
+//         );
+//         if (Import.node.specifiers.length === 0) Import.replace(null);
+//         return Import;
+//     })

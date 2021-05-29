@@ -25,7 +25,9 @@ function defineTestGenerating(
             fixtureDir,
             testFilePrefix + `.generated.${'js'}`
         );
-        const expectedGeneratedOutput = fs.readFileSync(generatedPath, 'utf8');
+        const expectedGeneratedOutput = fs
+            .readFileSync(generatedPath, 'utf8')
+            .trim();
         jest.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => {});
         it(testName, () => {
             runTest(

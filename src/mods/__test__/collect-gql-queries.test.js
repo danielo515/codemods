@@ -1,4 +1,4 @@
-const { defineTest } = require('jscodeshift/dist/testUtils');
+// const { defineTest } = require('jscodeshift/dist/testUtils');
 const { defineTestGenerating } = require('./utils');
 
 // describe('Collect GraphQl queries', () => {
@@ -13,7 +13,12 @@ const { defineTestGenerating } = require('./utils');
 //     });
 // });
 
-defineTest(__dirname, 'collect-gql-queries', {}, 'graphql-single-query');
+defineTestGenerating(
+    __dirname,
+    'collect-gql-queries',
+    {},
+    'graphql-single-query'
+);
 defineTestGenerating(
     __dirname,
     'collect-gql-queries',
