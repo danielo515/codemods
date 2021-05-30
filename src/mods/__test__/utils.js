@@ -18,7 +18,7 @@ function defineTestGenerating(
         : 'transforms correctly';
     describe(transformName, () => {
         afterEach(() => {
-            jest.restoreAllMocks();
+            jest.clearAllMocks();
         });
         const fixtureDir = path.join(dirName, '..', '__testfixtures__');
         const generatedPath = path.join(

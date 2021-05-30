@@ -1,5 +1,9 @@
 const fs = require('fs-extra');
 const path = require('path');
+const {
+    removePreservingComments,
+    getImportsOfIdentifiers
+} = require('../utils');
 const { describe } = require('jscodeshift-helper');
 
 /**
@@ -34,17 +38,6 @@ function getGraphqlDependency(source, j, importName = 'gql') {
  */
 function exportStatement(node, j) {
     return j(j.exportNamedDeclaration(node));
-}
-
-/**
- *
- *
- * @param {import('jscodeshift').ASTPath<*>} path
- */
-function removePreservingComments(path) {
-    const comments = path.node.comments;
-    if (comments && comments.length) path.parent.node.comments = comments;
-    path.prune();
 }
 
 /**
@@ -107,7 +100,7 @@ module.exports = function transformer(fileInfo, api, options) {
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
     // Any dependency the queries may have, like an imported fragment
-    const dependencies = [gqlDependency.toSource(), ''];
+    const dependencies = [];
     // I don't like this, but this seems to be the only way to "collect stuff"
     allQueriesOnDocument.forEach(query => {
         const parent = query.parent;
@@ -116,17 +109,23 @@ module.exports = function transformer(fileInfo, api, options) {
         // parent.parent because parent is just a declarator, and we want the whole declaration!
         queriesToExport.push(exportStatement(parent.parent.node, j).toSource());
         // Look for dependencies inside the string template, like fragments
-        dependencies.concat(
-            j(query)
+        dependencies.push(
+            ...j(query)
                 .find(j.TemplateLiteral)
                 .find(j.Identifier)
                 .paths()
                 .map(identifier => {
-                    return root
-                        .find(j.ImportSpecifier, {
-                            imported: { name: identifier.node.name }
-                        })
-                        .toSource();
+                    root.find(j.ImportSpecifier, {
+                        imported: { name: identifier.node.name }
+                    }).forEach(impSpec =>
+                        // cleanup, remove collected deps (identifiers) from the existing imports
+                        removeFromImport(
+                            j(impSpec.parent),
+                            impSpec.node.imported.name,
+                            j
+                        )
+                    );
+                    return identifier.node.name;
                 })
         );
         // Remove each variable declaration because we will compile them all to a single import
@@ -149,10 +148,23 @@ module.exports = function transformer(fileInfo, api, options) {
     if (queriesToExport.length === 0) return root.toSource();
 
     //===== File Generation=====
+    const requiredImports = getImportsOfIdentifiers(
+        dependencies,
+        j(fileInfo.source),
+        j
+    );
     // Write te exported queries to the target destination
     fs.writeFileSync(
         destinationFile,
-        [...dependencies, ...queriesToExport].join('\n')
+        [
+            gqlDependency.toSource(),
+            j(requiredImports).toSource(),
+            // if required imports is empty we don't want to introduce double \n
+            requiredImports.length ? '' : null,
+            ...queriesToExport
+        ]
+            .filter(x => x !== null)
+            .join('\n')
     );
 
     root.find(j.ImportDeclaration)

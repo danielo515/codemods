@@ -3,7 +3,7 @@ import { gql } from 'components/GraphQL';
 import { USER_FRAGMENT } from './fragments';
 
 const USER_QUERY = gql`
-    query companyViewQuery($companyID: ID) {
+    query userQuery($companyID: ID) {
         viewer {
             id
             company(id: $companyID) {
