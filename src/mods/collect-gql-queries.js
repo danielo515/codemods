@@ -7,6 +7,16 @@ const {
 const { describe } = require('jscodeshift-helper');
 
 /**
+ * Calls the toSource method of a collection.
+ * Usefult to map it on an array of collections
+ * @param {import('jscodeshift').Collection<*>} node
+ * @returns {string}
+ */
+function toSource(node) {
+    return node.toSource();
+}
+
+/**
  * Finds the import statements of the gql dependency
  * Removes other imports and returns it as source.
  * Make sure to only call if there is a graphql import, otherwise it may throw
@@ -158,7 +168,10 @@ module.exports = function transformer(fileInfo, api, options) {
         destinationFile,
         [
             gqlDependency.toSource(),
-            j(requiredImports).toSource(),
+            requiredImports
+                .map(j)
+                .map(toSource)
+                .join('\n'),
             // if required imports is empty we don't want to introduce double \n
             requiredImports.length ? '' : null,
             ...queriesToExport
