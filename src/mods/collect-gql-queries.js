@@ -1,9 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const {
-    removePreservingComments,
-    getImportsOfIdentifiers
-} = require('../utils');
+const { getImportsOfIdentifiers, removeFromImport } = require('../utils');
 const { describe } = require('jscodeshift-helper');
 
 /**
@@ -50,25 +47,6 @@ function exportStatement(node, j) {
     return j(j.exportNamedDeclaration(node));
 }
 
-/**
- * Removes elements from an import
- * if the final import is empty, also removes it
- * @param {import('jscodeshift').Collection<ImportDeclaration>} importPath
- * @param {string} nameToRemove
- * @param {JSCodeshift} j
- */
-function removeFromImport(importPath, nameToRemove, j) {
-    importPath
-        .find(j.ImportSpecifier, { imported: { name: nameToRemove } })
-        .remove();
-    // describe(importPath);
-    return importPath
-        .filter(
-            importDeclaration => importDeclaration.node.specifiers.length === 0
-        )
-        .forEach(removePreservingComments);
-}
-
 const defaultOutputName = 'graphql.js';
 
 /**
@@ -105,7 +83,7 @@ module.exports = function transformer(fileInfo, api, options) {
         tag: { name: 'gql' }
     });
     const gqlDependency = getGraphqlDependency(fileInfo.source, j);
-    // The queries as imports once you remove them from the document
+    // The query names we need to import after removing them from the document
     const importNames = [];
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
@@ -189,13 +167,3 @@ module.exports = function transformer(fileInfo, api, options) {
         quote: 'single'
     });
 };
-
-// return root
-//     .find(j.ImportDeclaration)
-//     .map(Import => {
-//         Import.value.specifiers = Import.value.specifiers.filter(
-//             sp => sp.imported.name !== 'gql'
-//         );
-//         if (Import.node.specifiers.length === 0) Import.replace(null);
-//         return Import;
-//     })

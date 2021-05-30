@@ -9,12 +9,13 @@ exports.getFirstNode = getFirstNode;
  *
  * @param {import('jscodeshift').ASTPath<*>} path
  */
-exports.removePreservingComments = function removePreservingComments(path) {
+function removePreservingComments(path) {
     const comments = path.node.comments;
     if (comments && comments.length) path.parent.node.comments = comments;
     path.prune();
-};
+}
 
+exports.removePreservingComments = removePreservingComments;
 /**
  * Given a list of identifier names
  * extracts the import paths that contains them
@@ -36,3 +37,25 @@ function getImportsOfIdentifiers(identifiers, root, j) {
 }
 
 exports.getImportsOfIdentifiers = getImportsOfIdentifiers;
+
+/**
+ * Removes elements from an import
+ * if the final import is empty, also removes it
+ * @param {import('jscodeshift').Collection<ImportDeclaration>} importPath
+ * @param {string} nameToRemove
+ * @param {JSCodeshift} j
+ */
+function removeFromImport(importPath, nameToRemove, j) {
+    importPath
+        .find(j.ImportSpecifier, { imported: { name: nameToRemove } })
+        .remove();
+    // describe(importPath);
+    return importPath
+        .filter(
+            (importDeclaration) =>
+                importDeclaration.node.specifiers.length === 0
+        )
+        .forEach(removePreservingComments);
+}
+
+exports.removeFromImport = removeFromImport;
