@@ -59,3 +59,19 @@ function removeFromImport(importPath, nameToRemove, j) {
 }
 
 exports.removeFromImport = removeFromImport;
+
+/**
+ *
+ *
+ * @param {String[]} namesToKeep
+ * @param {JSCodeshift} j
+ */
+const trimImports = (namesToKeep, j) =>
+    function (importPath) {
+        return importPath
+            .find(j.ImportSpecifier)
+            .filter((path) => !namesToKeep.includes(path.node.imported.name))
+            .remove();
+    };
+
+exports.trimImports = trimImports;

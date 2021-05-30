@@ -1,6 +1,10 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { getImportsOfIdentifiers, removeFromImport } = require('../utils');
+const {
+    getImportsOfIdentifiers,
+    removeFromImport,
+    trimImports
+} = require('../utils');
 const { describe } = require('jscodeshift-helper');
 
 /**
@@ -148,6 +152,7 @@ module.exports = function transformer(fileInfo, api, options) {
             gqlDependency.toSource(),
             requiredImports
                 .map(j)
+                .map(trimImports(dependencies, j))
                 .map(toSource)
                 .join('\n'),
             // if required imports is empty we don't want to introduce double \n
