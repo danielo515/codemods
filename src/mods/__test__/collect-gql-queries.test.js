@@ -44,5 +44,12 @@ defineTestGenerating(
     __dirname,
     'collect-gql-queries',
     {},
+    'graphql-not-first-import'
+);
+
+defineTestGenerating(
+    __dirname,
+    'collect-gql-queries',
+    {},
     'graphql-with-local-fragment'
 );

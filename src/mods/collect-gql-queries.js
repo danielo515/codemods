@@ -26,11 +26,7 @@ function toSource(node) {
  */
 function getGraphqlDependency(source, j, importName = 'gql') {
     const declaration = j(
-        j(source)
-            .find(j.ImportDeclaration, {
-                specifiers: [{ imported: { name: importName } }]
-            })
-            .get()
+        getImportsOfIdentifiers([importName], j(source), j)[0]
     );
     declaration
         .find(j.ImportSpecifier)
@@ -168,7 +164,7 @@ module.exports = function transformer(fileInfo, api, options) {
 
     root.find(j.ImportDeclaration)
         .at(0)
-        .insertBefore(importQueriesStatement);
+        .insertAfter(importQueriesStatement);
 
     //===== Cleanup =====
     return removeFromImport(root.find(j.ImportDeclaration), 'gql', j).toSource({
