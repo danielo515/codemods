@@ -39,3 +39,10 @@ defineTestGenerating(
     {},
     'graphql-with-several-fragment-imports'
 );
+
+defineTestGenerating(
+    __dirname,
+    'collect-gql-queries',
+    {},
+    'graphql-with-local-fragment'
+);
