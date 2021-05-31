@@ -1,33 +1,39 @@
 {
-    "name": "danielo-mod",
-    "version": "1.1.2",
-    "description": "This is a collection of [ codemods ](https://github.com/facebook/codemod) designed to blend any javascript codebase to my tyrannical desires. Codemods here will re-factor pieces of javascript code to adhere to certain programming practices that I think are better than others. Please check the documentation for each codemod to understand what it is supposed to do.",
-    "directories": {
-        "lib": "src"
-    },
-    "files": [
-        "src"
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "eslint src"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/danielo515/codemods.git"
-    },
-    "bin": "src/bin/cli.js",
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/danielo515/codemods/issues"
-    },
-    "homepage": "https://github.com/danielo515/codemods#readme",
-    "dependencies": {
-        "jscodeshift": "^0.11.0"
-    },
-    "devDependencies": {
-        "eslint": "^7.15.0"
-    }
+  "name": "danielo-mod",
+  "version": "1.1.2",
+  "description": "This is a collection of [ codemods ](https://github.com/facebook/codemod) designed to blend any javascript codebase to my tyrannical desires. Codemods here will re-factor pieces of javascript code to adhere to certain programming practices that I think are better than others. Please check the documentation for each codemod to understand what it is supposed to do.",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src",
+    "execute": "node src/bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielo515/codemods.git"
+  },
+  "bin": "src/bin/cli.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielo515/codemods/issues"
+  },
+  "homepage": "https://github.com/danielo515/codemods#readme",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "jscodeshift": "^0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.15.0",
+    "jest": "^27.0.1",
+    "jscodeshift-helper": "^1.1.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  }
 }
