@@ -17,28 +17,6 @@ function toSource(node) {
     return node.toSource();
 }
 
-/**
- * Finds the import statements of the gql dependency
- * Removes other imports and returns it as source.
- * Make sure to only call if there is a graphql import, otherwise it may throw
- * @param {string} source
- * @param {import('jscodeshift').JSCodeshift} j
- */
-function getGraphqlDependency(source, j, importName = 'gql') {
-    const declaration = j(
-        j(source)
-            .find(j.ImportDeclaration, {
-                specifiers: [{ imported: { name: importName } }]
-            })
-            .get()
-    );
-    declaration
-        .find(j.ImportSpecifier)
-        .filter(path => path.node.imported.name !== importName)
-        .remove();
-    return declaration;
-}
-
 /** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
 /** @typedef {import('jscodeshift').JSCodeshift} JSCodeshift */
 /**
@@ -86,13 +64,15 @@ module.exports = function transformer(fileInfo, api, options) {
     const allQueriesOnDocument = root.find(j.TaggedTemplateExpression, {
         tag: { name: 'gql' }
     });
-    const gqlDependency = getGraphqlDependency(fileInfo.source, j);
+    // Skip if no queries
+    if (allQueriesOnDocument.length === 0) return;
+
     // The query names we need to import after removing them from the document
     const importNames = [];
     // The body of the queries we want to move to a new file
     const queriesToExport = [];
     // Any dependency the queries may have, like an imported fragment
-    const dependencies = [];
+    const dependencies = ['gql'];
     // I don't like this, but this seems to be the only way to "collect stuff"
     allQueriesOnDocument.forEach(query => {
         const parent = query.parent;
@@ -149,7 +129,6 @@ module.exports = function transformer(fileInfo, api, options) {
     fs.writeFileSync(
         destinationFile,
         [
-            gqlDependency.toSource(),
             requiredImports
                 .map(j)
                 .map(trimImports(dependencies, j))
