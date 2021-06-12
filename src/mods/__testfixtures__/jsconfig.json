@@ -1,0 +1,11 @@
+{
+    "typeAcquisition": { "enable": false },
+    "compilerOptions": {
+        "checkJs": false,
+        "module": "es2020",
+        "target": "esnext"
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    }
+}

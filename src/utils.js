@@ -75,3 +75,17 @@ const trimImports = (namesToKeep, j) =>
     };
 
 exports.trimImports = trimImports;
+
+/**
+ * Creates a shorthand version of an objectProperty
+ * @param {string} propName
+ * @returns {import('jscodeshift').ObjectProperty}
+ */
+const shortProperty = (j, propName) => {
+    return {
+        ...j.property('init', j.identifier(propName), j.identifier(propName)),
+        shorthand: true,
+    };
+};
+
+module.exports.shortProperty = shortProperty;
