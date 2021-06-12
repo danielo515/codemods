@@ -107,3 +107,35 @@ function createObjectPattern(propNames) {
 }
 
 module.exports.createObjectPattern = createObjectPattern;
+
+/**
+ * Removes one argument/property from an object
+ * pattern on a function definition.
+ * May work on other scenarios, but didn't tried
+ * This should have been as simple as this:
+        j(path)
+            .find(j.Property, {
+                key: {
+                    name: argumentName,
+                },
+            })
+            .remove()
+ * but recast has a bug that introduces weird formatting, so we need to recreate it from scratch
+ */
+const removeObjectArgument = (argumentName, j) => (path) => {
+    // I like to find the property that I want, then scale up to the parent.
+    // That way I don't need to find all object patterns and then filter by property
+    const objPattern = j(path)
+        .find(j.Property, {
+            key: {
+                name: argumentName,
+            },
+        })
+        .paths()[0].parent;
+    const acceptedProps = objPattern.value.properties
+        .map((path) => path.value.name)
+        .filter((prop) => prop !== argumentName);
+    j(objPattern).replaceWith(createObjectPattern(acceptedProps));
+};
+
+module.exports.removeObjectArgument = removeObjectArgument;

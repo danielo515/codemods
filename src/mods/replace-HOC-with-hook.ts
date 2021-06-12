@@ -1,24 +1,16 @@
 import {
     API,
     ASTPath,
+    Collection,
     FileInfo,
     JSCodeshift,
     Options,
     VariableDeclarator,
 } from 'jscodeshift';
-import { createObjectPattern } from '../utils';
-
-/**
- * Removes one argument/property from an object
- * destructured on a function definition.
- * May work on other scenarios, but didn't tried
- */
-const removeObjectArgument = (argumentName: string, j: JSCodeshift) => (path) =>
-    console.log(
-        j(path)
-            .find(j.Property, { key: { name: argumentName } })
-            .remove()
-    );
+import {
+    createObjectPattern,
+    removeObjectArgument as removeObjectProp,
+} from '../utils';
 
 const pathIsFunction = (path: ASTPath<VariableDeclarator>) =>
     ['FunctionExpression', 'ArrowFunctionExpression'].includes(
@@ -30,6 +22,22 @@ const prependToBodyBlock = (j, node) => (path) =>
         .find(j.BlockStatement)
         .at(0)
         .forEach((block) => (block.node.body = [node, ...block.node.body]));
+
+const findFunctionNamed = (
+    root: Collection<any>,
+    j: JSCodeshift,
+    name: string
+) => {
+    const asFunctionDeclaration = root.find(j.FunctionDeclaration, {
+        id: { name },
+    });
+    if (asFunctionDeclaration.length > 0) return asFunctionDeclaration;
+    return root
+        .find(j.VariableDeclarator, {
+            id: { name },
+        })
+        .filter(pathIsFunction);
+};
 /**
  * Replace a HOC with a call to a corresponding hook
  */
@@ -72,21 +80,15 @@ module.exports = function transformer(
         .forEach((path) => {
             const hookArgs = path.node.arguments;
             const wrappedComponent = path.parent.value.arguments[0];
-            const maybeComponent = root
-                .find(j.VariableDeclarator, {
-                    id: { name: wrappedComponent.name },
-                })
-                .filter(pathIsFunction)
-                .forEach(removeObjectArgument(injectedProp, j));
+            const maybeComponent = findFunctionNamed(
+                root,
+                j,
+                wrappedComponent.name
+            ).forEach(removeObjectProp(injectedProp, j));
 
             const hookCall = buildHookCall(hookArgs);
 
-            maybeComponent
-                .find(j.FunctionExpression)
-                .forEach(prependToBodyBlock(j, hookCall));
-            maybeComponent
-                .find(j.ArrowFunctionExpression)
-                .forEach(prependToBodyBlock(j, hookCall));
+            maybeComponent.forEach(prependToBodyBlock(j, hookCall));
             // because this is curried, the parent is the call expression
             j(path.parent).replaceWith(wrappedComponent);
         })
