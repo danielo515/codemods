@@ -4,6 +4,14 @@
  */
 
 export default {
+    roots: ['<rootDir>/src'],
+    testMatch: [
+        '**/__tests__/**/*.+(ts|tsx|js)',
+        '**/?(*.)+(spec|test).+(ts|tsx|js)',
+    ],
+    transform: {
+        '^.+\\.(ts|tsx)$': 'ts-jest',
+    },
     // All imported modules in your tests should be mocked automatically
     // automock: false,
 
@@ -117,11 +125,6 @@ export default {
 
     // The root directory that Jest should scan for tests and modules within
     // rootDir: undefined,
-
-    // A list of paths to directories that Jest should use to search for files in
-    // roots: [
-    //   "<rootDir>"
-    // ],
 
     // Allows you to use a custom runner instead of Jest's default test runner
     // runner: "jest-runner",
