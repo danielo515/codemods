@@ -1,21 +1,9 @@
-import {
-    API,
-    ASTPath,
-    Collection,
-    FileInfo,
-    JSCodeshift,
-    Options,
-    VariableDeclarator,
-} from 'jscodeshift';
+import { findFunctionNamed } from '../utils/findFunctionNamed';
+import { API, FileInfo, Options } from 'jscodeshift';
 import {
     createObjectPattern,
     removeObjectArgument as removeObjectProp,
 } from '../utils';
-
-const pathIsFunction = (path: ASTPath<VariableDeclarator>) =>
-    ['FunctionExpression', 'ArrowFunctionExpression'].includes(
-        path.node.init.type
-    );
 
 const prependToBodyBlock = (j, node) => (path) =>
     j(path)
@@ -23,21 +11,6 @@ const prependToBodyBlock = (j, node) => (path) =>
         .at(0)
         .forEach((block) => (block.node.body = [node, ...block.node.body]));
 
-const findFunctionNamed = (
-    root: Collection<any>,
-    j: JSCodeshift,
-    name: string
-) => {
-    const asFunctionDeclaration = root.find(j.FunctionDeclaration, {
-        id: { name },
-    });
-    if (asFunctionDeclaration.length > 0) return asFunctionDeclaration;
-    return root
-        .find(j.VariableDeclarator, {
-            id: { name },
-        })
-        .filter(pathIsFunction);
-};
 /**
  * Replace a HOC with a call to a corresponding hook
  */
@@ -73,24 +46,25 @@ module.exports = function transformer(
             ),
         ]);
 
-    return root
-        .find(j.CallExpression, {
-            callee: { name: 'polyglotProvider' },
-        })
-        .forEach((path) => {
-            const hookArgs = path.node.arguments;
-            const wrappedComponent = path.parent.value.arguments[0];
-            const maybeComponent = findFunctionNamed(
-                root,
-                j,
-                wrappedComponent.name
-            ).forEach(removeObjectProp(injectedProp, j));
+    const HOCExecutions = root.find(j.CallExpression, {
+        callee: { name: hocName },
+    });
+    // if there are no HOC executions, just bail out
+    if (HOCExecutions.length === 0) return;
 
-            const hookCall = buildHookCall(hookArgs);
+    return HOCExecutions.forEach((path) => {
+        const hookArgs = path.node.arguments;
+        const wrappedComponent = path.parent.value.arguments[0];
+        const maybeComponent = findFunctionNamed(
+            root,
+            j,
+            wrappedComponent.name
+        ).forEach(removeObjectProp(injectedProp, j));
 
-            maybeComponent.forEach(prependToBodyBlock(j, hookCall));
-            // because this is curried, the parent is the call expression
-            j(path.parent).replaceWith(wrappedComponent);
-        })
-        .toSource();
+        const hookCall = buildHookCall(hookArgs);
+
+        maybeComponent.forEach(prependToBodyBlock(j, hookCall));
+        // because this is curried, the parent is the call expression
+        j(path.parent).replaceWith(wrappedComponent);
+    }).toSource();
 };
