@@ -1,3 +1,4 @@
+const { parse } = require('recast');
 /** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
 /** @typedef {import('jscodeshift').JSCodeshift} JSCodeshift */
 
@@ -89,3 +90,20 @@ const shortProperty = (j, propName) => {
 };
 
 module.exports.shortProperty = shortProperty;
+
+/**
+ *https://github.com/benjamn/recast/issues/240
+ * creates an object pattern from a list of property names.
+ * Can be used to generate destructured declarations or function
+ * arguments destructured
+ * I use this method because recast has a bug producing object patterns programmatically,
+ * it introduces unnecessary line returns.
+ * @param {string[]} propNames
+ * @returns {import('jscodeshift').ObjectPattern}
+ */
+function createObjectPattern(propNames) {
+    const js = `function foo({ ${propNames.join(', ')} }) {};`;
+    return parse(js).program.body[0].params[0];
+}
+
+module.exports.createObjectPattern = createObjectPattern;

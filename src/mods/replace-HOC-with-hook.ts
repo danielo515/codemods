@@ -6,7 +6,7 @@ import {
     Options,
     VariableDeclarator,
 } from 'jscodeshift';
-import { shortProperty } from '../utils';
+import { createObjectPattern } from '../utils';
 
 /**
  * Removes one argument/property from an object
@@ -59,7 +59,8 @@ module.exports = function transformer(
     const buildHookCall = (hookArgs) =>
         j.variableDeclaration('const', [
             j.variableDeclarator(
-                j.objectPattern([shortProperty(j, injectedProp)]),
+                //j.objectPattern([shortProperty(j, injectedProp)]),
+                createObjectPattern([injectedProp]),
                 j.callExpression(j.identifier(hookName), hookArgs)
             ),
         ]);
