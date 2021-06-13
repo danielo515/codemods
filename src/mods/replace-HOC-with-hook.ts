@@ -24,8 +24,6 @@ module.exports = function transformer(
 ) {
     const j = api.jscodeshift;
 
-    const { statement } = j.template;
-
     const root = j(file.source);
 
     const { hocName, hookName, importFrom, injectedProp } = options;

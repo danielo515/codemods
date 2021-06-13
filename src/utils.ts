@@ -1,22 +1,23 @@
+import { Collection, ImportDeclaration, JSCodeshift } from 'jscodeshift';
+
 const { parse } = require('recast');
 /** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
 /** @typedef {import('jscodeshift').JSCodeshift} JSCodeshift */
 
-const getFirstNode = (root) => root.find(j.Program).get('body', 0).node;
-exports.getFirstNode = getFirstNode;
+export const getFirstNode = (j, root) =>
+    root.find(j.Program).get('body', 0).node;
 
 /**
  *
  *
  * @param {import('jscodeshift').ASTPath<*>} path
  */
-function removePreservingComments(path) {
+export function removePreservingComments(path) {
     const comments = path.node.comments;
     if (comments && comments.length) path.parent.node.comments = comments;
     path.prune();
 }
 
-exports.removePreservingComments = removePreservingComments;
 /**
  * Given a list of identifier names
  * extracts the import paths that contains them
@@ -26,7 +27,7 @@ exports.removePreservingComments = removePreservingComments;
  * @param {import('jscodeshift').Collection} root
  * @param {JSCodeshift} j
  */
-function getImportsOfIdentifiers(identifiers, root, j) {
+export function getImportsOfIdentifiers(identifiers, root, j) {
     return root
         .find(j.ImportDeclaration)
         .filter((declaration) =>
@@ -37,16 +38,15 @@ function getImportsOfIdentifiers(identifiers, root, j) {
         .paths();
 }
 
-exports.getImportsOfIdentifiers = getImportsOfIdentifiers;
-
 /**
  * Removes elements from an import
  * if the final import is empty, also removes it
- * @param {import('jscodeshift').Collection<ImportDeclaration>} importPath
- * @param {string} nameToRemove
- * @param {JSCodeshift} j
  */
-function removeFromImport(importPath, nameToRemove, j) {
+export function removeFromImport(
+    importPath: Collection<ImportDeclaration>,
+    nameToRemove: string,
+    j: JSCodeshift
+) {
     importPath
         .find(j.ImportSpecifier, { imported: { name: nameToRemove } })
         .remove();
@@ -59,15 +59,11 @@ function removeFromImport(importPath, nameToRemove, j) {
         .forEach(removePreservingComments);
 }
 
-exports.removeFromImport = removeFromImport;
-
 /**
- *
- *
- * @param {String[]} namesToKeep
- * @param {JSCodeshift} j
+ * Removes all the import specifiers from an import
+ * except for the ones on the list provided
  */
-const trimImports = (namesToKeep, j) =>
+export const trimImports = (namesToKeep: string[], j: JSCodeshift) =>
     function (importPath) {
         return importPath
             .find(j.ImportSpecifier)
@@ -75,21 +71,17 @@ const trimImports = (namesToKeep, j) =>
             .remove();
     };
 
-exports.trimImports = trimImports;
-
 /**
  * Creates a shorthand version of an objectProperty
  * @param {string} propName
  * @returns {import('jscodeshift').ObjectProperty}
  */
-const shortProperty = (j, propName) => {
+export const shortProperty = (j, propName) => {
     return {
         ...j.property('init', j.identifier(propName), j.identifier(propName)),
         shorthand: true,
     };
 };
-
-module.exports.shortProperty = shortProperty;
 
 /**
  *https://github.com/benjamn/recast/issues/240
@@ -101,12 +93,10 @@ module.exports.shortProperty = shortProperty;
  * @param {string[]} propNames
  * @returns {import('jscodeshift').ObjectPattern}
  */
-function createObjectPattern(propNames) {
+export function createObjectPattern(propNames) {
     const js = `function foo({ ${propNames.join(', ')} }) {};`;
     return parse(js).program.body[0].params[0];
 }
-
-module.exports.createObjectPattern = createObjectPattern;
 
 /**
  * Removes one argument/property from an object
@@ -122,7 +112,7 @@ module.exports.createObjectPattern = createObjectPattern;
             .remove()
  * but recast has a bug that introduces weird formatting, so we need to recreate it from scratch
  */
-const removeObjectArgument = (argumentName, j) => (path) => {
+export const removeObjectArgument = (argumentName, j) => (path) => {
     // I like to find the property that I want, then scale up to the parent.
     // That way I don't need to find all object patterns and then filter by property
     const objPattern = j(path)
@@ -137,5 +127,3 @@ const removeObjectArgument = (argumentName, j) => (path) => {
         .filter((prop) => prop !== argumentName);
     j(objPattern).replaceWith(createObjectPattern(acceptedProps));
 };
-
-module.exports.removeObjectArgument = removeObjectArgument;
