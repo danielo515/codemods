@@ -1,10 +1,12 @@
 import { findFunctionNamed } from '../utils/findFunctionNamed';
+import { buildImport } from '../utils/buildImport';
 import { API, FileInfo, Options } from 'jscodeshift';
 import {
     createObjectPattern,
     removeObjectArgument as removeObjectProp,
 } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
+const addImports = require('jscodeshift-add-imports');
 
 const prependToBodyBlock = (j, node) => (path) =>
     j(path)
@@ -21,6 +23,8 @@ module.exports = function transformer(
     options: Options
 ) {
     const j = api.jscodeshift;
+
+    const { statement } = j.template;
 
     const root = j(file.source);
 
@@ -53,7 +57,9 @@ module.exports = function transformer(
     // if there are no HOC executions, just bail out
     if (HOCExecutions.length === 0) return;
 
-    return HOCExecutions.forEach((path) => {
+    let shouldAddHookImport = false;
+
+    HOCExecutions.forEach((path) => {
         const hookArgs = path.node.arguments;
         const wrappedComponent = path.parent.value.arguments[0];
         const maybeComponent = findFunctionNamed(
@@ -64,8 +70,13 @@ module.exports = function transformer(
 
         const hookCall = buildHookCall(hookArgs);
 
+        shouldAddHookImport = maybeComponent.length > 0;
+
         maybeComponent.forEach(prependToBodyBlock(j, hookCall));
         // because this is curried, the parent is the call expression
         j(path.parent).replaceWith(wrappedComponent);
-    }).toSource();
+    });
+    if (shouldAddHookImport)
+        addImports(root, buildImport(j, hookName, importFrom));
+    return root.toSource();
 };

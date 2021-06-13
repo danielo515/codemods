@@ -1,4 +1,4 @@
-import polyglotProvider from 'components/polyglotProvider';
+import polyglotProvider, { usePolyglot } from 'components/polyglotProvider';
 
 import Logo from 'icons/Logo.svg';
 import React from 'react';
