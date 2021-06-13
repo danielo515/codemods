@@ -7,6 +7,8 @@ defineTest(
         api: { report: console.log },
         hookName: 'usePolyglot',
         hocName: 'polyglotProvider',
+        injectedProp: '__',
+        importFrom: 'components/polyglotProvider',
     },
     'replace-HOC-with-hook'
 );
@@ -18,6 +20,8 @@ defineTest(
         api: { report: console.log },
         hookName: 'usePolyglot',
         hocName: 'polyglotProvider',
+        injectedProp: '__',
+        importFrom: 'components/polyglotProvider',
     },
     'replace-HOC-with-hook-regular-fn'
 );

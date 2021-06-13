@@ -4,6 +4,7 @@ import {
     createObjectPattern,
     removeObjectArgument as removeObjectProp,
 } from '../utils';
+import { failIfMissing } from '../utils/failIfMissing';
 
 const prependToBodyBlock = (j, node) => (path) =>
     j(path)
@@ -23,24 +24,24 @@ module.exports = function transformer(
 
     const root = j(file.source);
 
-    const { hocName, hookName } = options;
+    const { hocName, hookName, importFrom, injectedProp } = options;
 
-    if (!hocName) {
-        api.report('You must provide a HOC name!');
-        process.exit(1);
-    }
-
-    if (!hookName) {
-        api.report('You must provide a hook name!');
-        process.exit(1);
-    }
-
-    const injectedProp = '__';
+    failIfMissing(hocName, 'a HOC name as --hocName', api);
+    failIfMissing(hookName, 'a hook name as --hookName', api);
+    failIfMissing(
+        importFrom,
+        'the path to import the hook from as --importFrom',
+        api
+    );
+    failIfMissing(
+        injectedProp,
+        'the prop the HOC injects as --injectedProp',
+        api
+    );
 
     const buildHookCall = (hookArgs) =>
         j.variableDeclaration('const', [
             j.variableDeclarator(
-                //j.objectPattern([shortProperty(j, injectedProp)]),
                 createObjectPattern([injectedProp]),
                 j.callExpression(j.identifier(hookName), hookArgs)
             ),
