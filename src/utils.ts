@@ -47,9 +47,10 @@ export function removeFromImport(
     nameToRemove: string,
     j: JSCodeshift
 ) {
-    importPath
-        .find(j.ImportSpecifier, { imported: { name: nameToRemove } })
-        .remove();
+    const filter = { local: { name: nameToRemove } };
+    importPath.find(j.ImportSpecifier, filter).remove();
+
+    importPath.find(j.ImportDefaultSpecifier, filter).remove();
     // describe(importPath);
     return importPath
         .filter(
@@ -126,4 +127,25 @@ export const removeObjectArgument = (argumentName, j) => (path) => {
         .map((path) => path.value.name)
         .filter((prop) => prop !== argumentName);
     j(objPattern).replaceWith(createObjectPattern(acceptedProps));
+};
+
+/**
+ * Tells you if an imported identifier is used, excluding it's own import statement
+ * Borrowed from:
+ * https://github.com/jeremistadler/codemod-remove-unused-imports/blob/master/index.js
+ */
+export const isUsed = (j: JSCodeshift, root: Collection, local: string) => {
+    return (
+        root
+            .find(j.Identifier, {
+                name: local,
+            })
+            .filter((p) => {
+                return (
+                    p.parent.value.type !== 'ImportSpecifier' &&
+                    p.parent.value.type !== 'ImportDefaultSpecifier'
+                );
+            })
+            .size() > 0
+    );
 };

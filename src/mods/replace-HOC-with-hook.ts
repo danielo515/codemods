@@ -3,6 +3,8 @@ import { buildImport } from '../utils/buildImport';
 import { API, FileInfo, Options } from 'jscodeshift';
 import {
     createObjectPattern,
+    isUsed,
+    removeFromImport,
     removeObjectArgument as removeObjectProp,
 } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
@@ -54,7 +56,7 @@ module.exports = function transformer(
     });
     // if there are no HOC executions, just bail out
     if (HOCExecutions.length === 0) return;
-
+    // If no substitution was performed, then no add the hook as import
     let shouldAddHookImport = false;
 
     HOCExecutions.forEach((path) => {
@@ -76,5 +78,10 @@ module.exports = function transformer(
     });
     if (shouldAddHookImport)
         addImports(root, buildImport(j, hookName, importFrom));
+    // because our substitution, the HOC may not be used anymore
+    if (!isUsed(j, root, hocName)) {
+        console.log('removing HOC', hocName);
+        removeFromImport(root.find(j.ImportDeclaration), hocName, j);
+    }
     return root.toSource();
 };

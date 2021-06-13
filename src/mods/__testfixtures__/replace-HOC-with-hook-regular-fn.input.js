@@ -1,3 +1,4 @@
+//@flow
 import polyglotProvider from 'components/polyglotProvider';
 
 import Logo from 'icons/Logo.svg';
