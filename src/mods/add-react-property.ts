@@ -1,17 +1,14 @@
-const failIfMissing = (value, missing_info, api) => {
-    if (!value) {
-        api.report(`You must provide ${missing_info}`);
-        process.exit(1);
-    }
-};
+import { API, FileInfo, Options } from 'jscodeshift';
+import { failIfMissing } from '../utils/failIfMissing';
 /**
  * This code-mod allows you to add a property to those component calls that do not include it.
  * Useful for deprecating/removing default values
- * @param {import('jscodeshift').FileInfo} file
- * @param {import('jscodeshift').API} api
- * @param {import('jscodeshift').Options} options
  */
-module.exports = function transformer(file, api, options) {
+module.exports = function transformer(
+    file: FileInfo,
+    api: API,
+    options: Options
+) {
     const j = api.jscodeshift;
 
     const root = j(file.source);
