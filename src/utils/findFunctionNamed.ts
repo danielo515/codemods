@@ -1,6 +1,7 @@
 import {
     ASTPath,
     Collection,
+    Function,
     JSCodeshift,
     VariableDeclarator,
 } from 'jscodeshift';
@@ -14,7 +15,7 @@ export const findFunctionNamed = (
     root: Collection<any>,
     j: JSCodeshift,
     name: string
-) => {
+): Collection<Function> => {
     const asFunctionDeclaration = root.find(j.FunctionDeclaration, {
         id: {
             name,
@@ -27,5 +28,6 @@ export const findFunctionNamed = (
                 name,
             },
         })
-        .filter(pathIsFunction);
+        .filter(pathIsFunction)
+        .find(j.Function);
 };
