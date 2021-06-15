@@ -50,5 +50,7 @@ try {
 } catch (e) {
     console.log(e, output);
 }
-console.log(output.stderr.toString());
-console.log(output.stdout.toString());
+if (output) {
+    console.log(output.stderr.toString());
+    console.log(output.stdout.toString());
+}
