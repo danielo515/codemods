@@ -40,7 +40,7 @@ if (!availableMods.has(modName)) {
 let output;
 try {
     output = spawnSync(
-        join(__dirname, '../../node_modules/jscodeshift/bin/jscodeshift.js'),
+        join(require.resolve('jscodeshift'), '../bin/jscodeshift.js'),
         [
             '-t',
             require.resolve(`../mods/${availableMods.get(modName)}`),
