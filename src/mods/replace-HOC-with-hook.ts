@@ -1,6 +1,6 @@
 import { findFunctionNamed } from '../utils/findFunctionNamed';
 import { buildImport } from '../utils/buildImport';
-import { API, FileInfo, Options } from 'jscodeshift';
+import { API, FileInfo, JSCodeshift, Options } from 'jscodeshift';
 import {
     createObjectPattern,
     isUsed,
@@ -8,13 +8,28 @@ import {
     removeObjectArgument as removeObjectProp,
 } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
+import { StatementKind } from 'ast-types/gen/kinds';
 const addImports = require('jscodeshift-add-imports');
 
-const prependToBodyBlock = (j, node) => (path) =>
-    j(path)
-        .find(j.BlockStatement)
-        .at(0)
-        .forEach((block) => (block.node.body = [node, ...block.node.body]));
+const prependToFunctionBody =
+    (j: JSCodeshift, node: StatementKind) => (path) => {
+        const prepend = (fn) => {
+            if (!j.BlockStatement.check(fn.node.body)) {
+                fn.node.body = j.blockStatement([
+                    node,
+                    j.returnStatement(fn.node.body),
+                ]);
+                return;
+            }
+            return fn.get('body').get('body').unshift(node);
+        };
+        // if node is already a function, prepend to it
+        if (j.Function.check(path.value)) {
+            prepend(path);
+        }
+        // if it is not, find the closest function
+        j(path).find(j.Function).forEach(prepend);
+    };
 
 /**
  * Replace a HOC with a call to a corresponding hook
@@ -73,7 +88,7 @@ module.exports = function transformer(
         const hookCall = buildHookCall(hookArgs);
         shouldAddHookImport = true;
 
-        maybeComponent.forEach(prependToBodyBlock(j, hookCall));
+        maybeComponent.forEach(prependToFunctionBody(j, hookCall));
         // because this is curried, the parent is the call expression
         j(path.parent).replaceWith(wrappedComponent);
     });
@@ -81,7 +96,6 @@ module.exports = function transformer(
         addImports(root, buildImport(j, hookName, importFrom));
     // because our substitution, the HOC may not be used anymore
     if (!isUsed(j, root, hocName)) {
-        console.log('removing HOC', hocName);
         removeFromImport(root.find(j.ImportDeclaration), hocName, j);
     }
     return root.toSource();
