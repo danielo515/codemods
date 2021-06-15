@@ -68,9 +68,10 @@ module.exports = function transformer(
             wrappedComponent.name
         ).forEach(removeObjectProp(injectedProp, j));
 
-        const hookCall = buildHookCall(hookArgs);
+        if (maybeComponent.length === 0) return;
 
-        shouldAddHookImport = maybeComponent.length > 0;
+        const hookCall = buildHookCall(hookArgs);
+        shouldAddHookImport = true;
 
         maybeComponent.forEach(prependToBodyBlock(j, hookCall));
         // because this is curried, the parent is the call expression
