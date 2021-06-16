@@ -1,4 +1,9 @@
-import { Collection, ImportDeclaration, JSCodeshift } from 'jscodeshift';
+import {
+    Collection,
+    ImportDeclaration,
+    JSCodeshift,
+    ObjectPattern,
+} from 'jscodeshift';
 
 const { parse } = require('recast');
 /** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
@@ -91,43 +96,17 @@ export const shortProperty = (j, propName) => {
  * arguments destructured
  * I use this method because recast has a bug producing object patterns programmatically,
  * it introduces unnecessary line returns.
- * @param {string[]} propNames
- * @returns {import('jscodeshift').ObjectPattern}
  */
-export function createObjectPattern(propNames) {
-    const js = `function foo({ ${propNames.join(', ')} }) {};`;
-    return parse(js).program.body[0].params[0];
+export function createObjectPattern(
+    propNames: string[],
+    annotation?: string
+): ObjectPattern {
+    const js = `function foo({ ${propNames.join(', ')} }${
+        annotation ? ': ' + annotation : ''
+    } ) {};`;
+    return parse(js, { parser: require('recast/parsers/flow') }).program.body[0]
+        .params[0];
 }
-
-/**
- * Removes one argument/property from an object
- * pattern on a function definition.
- * May work on other scenarios, but didn't tried
- * This should have been as simple as this:
-        j(path)
-            .find(j.Property, {
-                key: {
-                    name: argumentName,
-                },
-            })
-            .remove()
- * but recast has a bug that introduces weird formatting, so we need to recreate it from scratch
- */
-export const removeObjectArgument = (argumentName, j) => (path) => {
-    // I like to find the property that I want, then scale up to the parent.
-    // That way I don't need to find all object patterns and then filter by property
-    const objPattern = j(path)
-        .find(j.Property, {
-            key: {
-                name: argumentName,
-            },
-        })
-        .paths()[0].parent;
-    const acceptedProps = objPattern.value.properties
-        .map((path) => path.value.name)
-        .filter((prop) => prop !== argumentName);
-    j(objPattern).replaceWith(createObjectPattern(acceptedProps));
-};
 
 /**
  * Tells you if an imported identifier is used, excluding it's own import statement

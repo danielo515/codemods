@@ -6,7 +6,12 @@ import React from 'react';
 import phrases from './AccountantHeader.phrases';
 import styles from './AccountantHeader.scss';
 
-const AccountantHeader = ({ __, managingCompanyName }) => (
+type Props = {
+    __: Translator,
+    managingCompanyName: string,
+};
+
+const AccountantHeader = ({ __, managingCompanyName }: Props) => (
     <div className={styles.background}>
         <div className={styles.container}>
             {managingCompanyName ? (

@@ -49,7 +49,8 @@ defineTest(
         injectedProp: '__',
         importFrom: 'components/polyglotProvider',
     },
-    'replace-HOC-with-hook-implicit-return'
+    'replace-HOC-with-hook-implicit-return',
+    { parser: 'flow' }
 );
 defineTest(
     __dirname,

@@ -1,21 +1,10 @@
 import { prependToFunctionBody } from './../utils/prependToFunctionBody';
 import { findFunctionNamed } from '../utils/findFunctionNamed';
 import { buildImport } from '../utils/buildImport';
-import {
-    API,
-    ASTPath,
-    FileInfo,
-    Function,
-    JSCodeshift,
-    Options,
-} from 'jscodeshift';
-import {
-    createObjectPattern,
-    isUsed,
-    removeFromImport,
-    removeObjectArgument as removeObjectProp,
-} from '../utils';
+import { API, FileInfo, Options } from 'jscodeshift';
+import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
+import { removeObjectArgument } from '../utils/removeObjectArgument';
 const addImports = require('jscodeshift-add-imports');
 
 /**
@@ -68,7 +57,7 @@ module.exports = function transformer(
             root,
             j,
             wrappedComponent.name
-        ).forEach(removeObjectProp(injectedProp, j));
+        ).forEach(removeObjectArgument(injectedProp, j));
 
         if (maybeComponent.length === 0) return;
 
