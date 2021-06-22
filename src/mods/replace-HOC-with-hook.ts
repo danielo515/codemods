@@ -5,6 +5,7 @@ import { API, FileInfo, Options } from 'jscodeshift';
 import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
 import { removeObjectArgument } from '../utils/removeObjectArgument';
+import { removeFromTypedArgs } from '../utils/removeFromTypedArgs';
 const addImports = require('jscodeshift-add-imports');
 
 /**
@@ -64,7 +65,9 @@ module.exports = function transformer(
         const hookCall = buildHookCall(hookArgs);
         shouldAddHookImport = true;
 
-        maybeComponent.forEach(prependToFunctionBody(j, hookCall));
+        maybeComponent
+            .forEach(prependToFunctionBody(j, hookCall))
+            .forEach(removeFromTypedArgs(j, root, injectedProp));
         // because this is curried, the parent is the call expression
         j(path.parent).replaceWith(wrappedComponent);
     });

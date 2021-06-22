@@ -6,9 +6,7 @@ import React from 'react';
 import phrases from './AccountantHeader.phrases';
 import styles from './AccountantHeader.scss';
 
-type Props = {
-    managingCompanyName: string,
-};
+type Props = { managingCompanyName: string };
 
 const AccountantHeader = ({ managingCompanyName }: Props) => {
     const { __ } = usePolyglot(phrases);
