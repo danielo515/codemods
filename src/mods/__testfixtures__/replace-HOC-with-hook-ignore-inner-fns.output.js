@@ -6,7 +6,9 @@ import React from 'react';
 import phrases from './AccountantHeader.phrases';
 import styles from './AccountantHeader.scss';
 
-function AccountantHeader({ managingCompanyName }) {
+function AccountantHeader({
+    managingCompanyName
+}) {
     const { __ } = usePolyglot(phrases);
     const whenManaging = () => (
         <div>

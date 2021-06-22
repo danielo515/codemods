@@ -7,7 +7,11 @@ import React from 'react';
 import phrases from './AccountantHeader.phrases';
 import styles from './AccountantHeader.scss';
 
-const AccountantHeader = ({ photo, managingCompanyName, isAdmin }) => {
+const AccountantHeader = ({
+    photo,
+    managingCompanyName,
+    isAdmin
+}) => {
     const { __ } = usePolyglot(phrases);
     const navigationLinks = [
         { text: __('bookkeeperDashboard'), route: '/companies' },

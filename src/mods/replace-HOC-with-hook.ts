@@ -4,7 +4,10 @@ import { buildImport } from '../utils/buildImport';
 import { API, FileInfo, Options } from 'jscodeshift';
 import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
-import { removeObjectArgument } from '../utils/removeObjectArgument';
+import {
+    removeObjectArgument,
+    removeFromObj,
+} from '../utils/removeObjectArgument';
 import { removeFromTypedArgs } from '../utils/removeFromTypedArgs';
 const addImports = require('jscodeshift-add-imports');
 
@@ -58,7 +61,7 @@ module.exports = function transformer(
             root,
             j,
             wrappedComponent.name
-        ).forEach(removeObjectArgument(injectedProp, j));
+        ).forEach(removeFromObj(j, injectedProp));
 
         if (maybeComponent.length === 0) return;
 

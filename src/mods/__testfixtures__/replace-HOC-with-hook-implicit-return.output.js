@@ -8,7 +8,11 @@ import styles from './AccountantHeader.scss';
 
 type Props = { managingCompanyName: string };
 
-const AccountantHeader = ({ managingCompanyName }: Props) => {
+const AccountantHeader = (
+    {
+        managingCompanyName
+    }: Props
+) => {
     const { __ } = usePolyglot(phrases);
 
     return (
