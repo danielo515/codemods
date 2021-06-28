@@ -3,10 +3,15 @@ import { usePolyglot } from 'components/polyglotProvider';
 import phrases from './MyComponent.phrases';
 
 function MyComponent({
-    isCool = false
+    isCool = false,
+    prefix: prefx
 }) {
     const { __ } = usePolyglot(phrases);
-    return isCool ? __('isCool') : __('notCool');
+    return (
+        <div>
+            {prefx} {isCool ? __('isCool') : __('notCool')}
+        </div>
+    );
 }
 
 export default MyComponent;
