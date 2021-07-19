@@ -29,5 +29,6 @@ export const findFunctionNamed = (
             },
         })
         .filter(pathIsFunction)
-        .find(j.Function);
+        .find(j.Function)
+        .at(0);
 };

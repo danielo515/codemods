@@ -6,9 +6,12 @@ import React from 'react';
 import phrases from './AccountantHeader.phrases';
 import styles from './AccountantHeader.scss';
 
-function AccountantHeader({ __, managingCompanyName }) {
+const AccountantHeader = ({ __, managingCompanyName }) => {
+    const helperFn = () => {
+        return [1, 2, 3].forEach(() => console.log('helper called'));
+    };
     const whenManaging = () => (
-        <div>
+        <div onMouseEnter={helperFn}>
             <div className={styles.managingLabel}>{__('managing')}</div>
             <div className={styles.managingCompany}>{managingCompanyName}</div>
         </div>
@@ -24,8 +27,15 @@ function AccountantHeader({ __, managingCompanyName }) {
             <div className={styles.container}>
                 {managingCompanyName ? whenManaging() : notManaging}
             </div>
+            <button
+                onClick={(e) => {
+                    console.log('something happened');
+                }}
+            >
+                {__('save')}
+            </button>
         </div>
     );
-}
+};
 
 export default polyglotProvider(phrases)(AccountantHeader);
