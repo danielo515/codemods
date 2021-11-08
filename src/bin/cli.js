@@ -39,14 +39,18 @@ if (!availableMods.has(modName)) {
 }
 let output;
 try {
-    output = spawnSync(
-        join(require.resolve('jscodeshift'), '../bin/jscodeshift.js'),
-        [
-            '-t',
-            require.resolve(`../mods/${availableMods.get(modName)}`),
-            ...restArgs,
-        ]
+    const spanwArgs = [
+        '-t',
+        require.resolve(`../mods/${availableMods.get(modName)}`),
+        ...restArgs,
+    ];
+    const jscodeshiftBinary = join(
+        require.resolve('jscodeshift'),
+        '../bin/jscodeshift.js'
     );
+
+    console.log(`Running ${jscodeshiftBinary} ${spanwArgs.join(' ')}`);
+    output = spawnSync(jscodeshiftBinary, spanwArgs);
 } catch (e) {
     console.log(e, output);
 }
