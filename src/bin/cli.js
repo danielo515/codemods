@@ -89,11 +89,13 @@ async function getCodemodArguments(codemod) {
         ...modArguments,
     ]);
 
-    const { path: targetPath, parser, ...otherAnswers } = answers;
+    const { path: targetPath, ...otherAnswers } = answers;
     return Object.entries(otherAnswers)
         .map(([option, value]) => `--${option}=${value}`)
         .concat([
-            parser === 'ts' ? '--extensions=ts,tsx' : '---extensions=js,jsx',
+            answers.parser === 'ts'
+                ? '--extensions=ts,tsx'
+                : '---extensions=js,jsx',
             targetPath,
         ]);
 }
