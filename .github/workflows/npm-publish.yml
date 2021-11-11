@@ -23,13 +23,10 @@ jobs:
         needs: build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - name: Configure committer
-              run: |
-                  git config user.name "GitHub Actions Bot"
-                  git config user.email "<>"
-            - name: Bump version
-              uses: qzb/standard-version-action@v1.0.1
+            - name: Conventional Changelog Action
+              uses: TriPSs/conventional-changelog-action@v3
+              with:
+                  github-token: ${{ secrets.github_token }}
 
     publish:
         needs: bump
