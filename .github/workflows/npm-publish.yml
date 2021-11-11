@@ -4,9 +4,7 @@
 name: Publish Package
 
 on:
-    push:
-        branches:
-            - master
+    release:
 
 jobs:
     build:
@@ -19,18 +17,8 @@ jobs:
             - run: yarn
             # - run: yarn test
 
-    bump:
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - name: Conventional Changelog Action
-              uses: TriPSs/conventional-changelog-action@v3
-              with:
-                  github-token: ${{ secrets.github_token }}
-
     publish:
-        needs: bump
+        needs: build
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
