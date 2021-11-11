@@ -4,10 +4,7 @@ import { buildImport } from '../utils/buildImport';
 import { API, FileInfo, Options } from 'jscodeshift';
 import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
-import {
-    removeObjectArgument,
-    removeFromObj,
-} from '../utils/removeObjectArgument';
+import { removeFromObj } from '../utils/removeObjectArgument';
 import { removeFromTypedArgs } from '../utils/removeFromTypedArgs';
 const addImports = require('jscodeshift-add-imports');
 
