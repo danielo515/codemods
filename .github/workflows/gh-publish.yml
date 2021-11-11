@@ -4,7 +4,9 @@
 name: Publish Package to GitHub Packages
 
 on:
-    release:
+    push:
+        tags:
+            - "v*"
 
 jobs:
     publish-gpr:
