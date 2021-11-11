@@ -1,4 +1,13 @@
-# 1.3.0 (2021-11-11)
+## [1.3.1](https://github.com/danielo515/codemods/compare/v1.3.0...v1.3.1) (2021-11-11)
+
+
+### Bug Fixes
+
+* please publish this thing ([60176d8](https://github.com/danielo515/codemods/commit/60176d86f79f93a4a0284c6d822210e8955314e1))
+
+
+
+# [1.3.0](https://github.com/danielo515/codemods/compare/cc21fa1cf6a0eed4e1c892edc7744357452a640d...v1.3.0) (2021-11-11)
 
 
 ### Bug Fixes
