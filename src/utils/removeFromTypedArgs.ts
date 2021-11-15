@@ -1,4 +1,10 @@
-import { ASTPath, JSCodeshift, Function, Collection } from 'jscodeshift';
+import {
+    ASTPath,
+    JSCodeshift,
+    Function,
+    Collection,
+    ASTNode,
+} from 'jscodeshift';
 
 /**
  * Given a function path that contains a named typed argument (not inlined type definition)
@@ -23,7 +29,7 @@ export const removeFromTypedArgs =
         const removeProp = (name) => (path) => {
             j(path).find(j.ObjectTypeProperty, { key: { name } }).remove();
         };
-        j(path)
+        j(path as ASTPath<ASTNode>)
             .find(j.GenericTypeAnnotation)
             .find(j.Identifier)
             .forEach((annotation) => {

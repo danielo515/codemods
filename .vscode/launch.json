@@ -21,7 +21,7 @@
                 "--injectedProp=__",
                 "-t",
                 "${workspaceFolder}/src/mods/replace-HOC-with-hook.ts",
-                "file"
+                "${workspaceFolder}/src/mods/__testfixtures__/replace-HOC-with-hook-doubleWrapped.input.tsx"
             ]
         }
     ]

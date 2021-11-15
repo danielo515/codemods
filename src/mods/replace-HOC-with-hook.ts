@@ -1,7 +1,7 @@
 import { prependToFunctionBody } from './../utils/prependToFunctionBody';
 import { findFunctionNamed } from '../utils/findFunctionNamed';
 import { buildImport } from '../utils/buildImport';
-import { API, FileInfo, Options } from 'jscodeshift';
+import { API, FileInfo, Identifier, Options, SpreadElement } from 'jscodeshift';
 import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
 import { removeFromObj } from '../utils/removeObjectArgument';
@@ -50,8 +50,6 @@ module.exports = function transformer(
     if (HOCExecutions.length === 0) return;
     // If no substitution was performed, then no add the hook as import
     let shouldAddHookImport = false;
-    // CallExpression
-
     HOCExecutions.forEach((path) => {
         const hookArgs = path.node.arguments;
         const wrappedComponent = path.parent.value.arguments[0];
@@ -59,7 +57,7 @@ module.exports = function transformer(
             root,
             j,
             j.CallExpression.check(wrappedComponent) // Is the component wrapped in a call?
-                ? wrappedComponent.arguments[0].name
+                ? (wrappedComponent.arguments[0] as Identifier).name
                 : wrappedComponent.name
         ).forEach(removeFromObj(j, injectedProp));
 
