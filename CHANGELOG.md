@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/danielo515/codemods/compare/v1.3.5...v1.4.0) (2021-11-15)
+
+
+### Features
+
+* allow to modify components that are wrapped on another HOC call ([2bbca1e](https://github.com/danielo515/codemods/commit/2bbca1ece3ed7a8d70bcbbd41f10e3d1bd9b730e))
+
+
+
 ## [1.3.5](https://github.com/danielo515/codemods/compare/v1.3.3...v1.3.5) (2021-11-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * please publish this thing ([60176d8](https://github.com/danielo515/codemods/commit/60176d86f79f93a4a0284c6d822210e8955314e1))
-
-
-
-# [1.3.0](https://github.com/danielo515/codemods/compare/v1.2.5...v1.3.0) (2021-11-11)
-
-
-### Features
-
-* allow to provide arguments interactively ([b5ee86e](https://github.com/danielo515/codemods/commit/b5ee86e20621f713eec462b75c11e6928568e335))
 
 
 
