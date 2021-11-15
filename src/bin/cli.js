@@ -69,7 +69,7 @@ async function getCodemodArguments(codemod) {
             name: 'parser',
             description: 'Select a parser',
             choices: ['typescript', 'flow'],
-            filter: (parser) => (parser === 'typescript' ? 'ts' : 'js'),
+            filter: (parser) => (parser === 'typescript' ? 'tsx' : 'js'),
         },
         {
             type: 'fuzzypath',
@@ -93,8 +93,8 @@ async function getCodemodArguments(codemod) {
     return Object.entries(otherAnswers)
         .map(([option, value]) => `--${option}=${value}`)
         .concat([
-            answers.parser === 'ts'
-                ? '--extensions=ts,tsx'
+            answers.parser === 'tsx'
+                ? '--extensions=ts,tsx,js,jsx'
                 : '---extensions=js,jsx',
             targetPath,
         ]);
