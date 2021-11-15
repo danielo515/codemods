@@ -50,6 +50,7 @@ module.exports = function transformer(
     if (HOCExecutions.length === 0) return;
     // If no substitution was performed, then no add the hook as import
     let shouldAddHookImport = false;
+    // CallExpression
 
     HOCExecutions.forEach((path) => {
         const hookArgs = path.node.arguments;
@@ -57,7 +58,9 @@ module.exports = function transformer(
         const maybeComponent = findFunctionNamed(
             root,
             j,
-            wrappedComponent.name
+            j.CallExpression.check(wrappedComponent) // Is the component wrapped in a call?
+                ? wrappedComponent.arguments[0].name
+                : wrappedComponent.name
         ).forEach(removeFromObj(j, injectedProp));
 
         if (maybeComponent.length === 0) return;

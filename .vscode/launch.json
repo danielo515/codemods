@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch HOC replace",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/node_modules/.bin/jscodeshift",
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "args": [
+                "--extensions",
+                "tsx,ts",
+                "--parser=tsx",
+                "--hocName=polyglotProvider",
+                "--hookName=usePolyglot ",
+                "--importFrom=components/polyglotProvider ",
+                "--injectedProp=__",
+                "-t",
+                "${workspaceFolder}/src/mods/replace-HOC-with-hook.ts",
+                "file"
+            ]
+        }
+    ]
+}
