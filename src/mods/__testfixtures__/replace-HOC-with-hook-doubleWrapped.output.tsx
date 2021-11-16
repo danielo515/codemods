@@ -35,8 +35,10 @@ const Item = ({ title, subtitle, img, onClick }) => (
 
 export const PensionSetupOptionsModal = (props: Props) => {
     const { __ } = usePolyglot(phrases);
-    const { isOpen, closeModal, selectPensionProvider, companyPensions } =
-        props;
+    const {
+        isOpen,
+        closeModal
+    } = props;
     return (
         <Modal isOpen={isOpen} close={closeModal}>
             <ModalHeader>

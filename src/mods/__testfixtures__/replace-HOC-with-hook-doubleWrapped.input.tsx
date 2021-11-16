@@ -36,8 +36,7 @@ const Item = ({ title, subtitle, img, onClick }) => (
 );
 
 export const PensionSetupOptionsModal = (props: Props) => {
-    const { __, isOpen, closeModal, selectPensionProvider, companyPensions } =
-        props;
+    const { __, isOpen, closeModal } = props;
     return (
         <Modal isOpen={isOpen} close={closeModal}>
             <ModalHeader>
