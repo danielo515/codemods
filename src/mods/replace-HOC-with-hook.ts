@@ -1,7 +1,7 @@
 import { prependToFunctionBody } from './../utils/prependToFunctionBody';
 import { findFunctionNamed } from '../utils/findFunctionNamed';
 import { buildImport } from '../utils/buildImport';
-import { API, FileInfo, Identifier, Options, SpreadElement } from 'jscodeshift';
+import { API, FileInfo, Identifier, Options } from 'jscodeshift';
 import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
 import { removeFromObj } from '../utils/removeObjectArgument';
