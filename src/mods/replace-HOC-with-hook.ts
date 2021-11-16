@@ -66,6 +66,13 @@ module.exports = function transformer(
         const hookCall = buildHookCall(hookArgs);
         shouldAddHookImport = true;
 
+        // Remove potential current usages from props
+        maybeComponent
+            .find(j.ObjectProperty, {
+                key: { name: injectedProp },
+            })
+            .remove();
+
         maybeComponent
             .forEach(prependToFunctionBody(j, hookCall))
             .forEach(removeFromTypedArgs(j, root, injectedProp));
