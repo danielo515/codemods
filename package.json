@@ -1,47 +1,47 @@
 {
-    "name": "danielo-mod",
-    "version": "1.4.0",
-    "description": "This is a collection of [ codemods ](https://github.com/facebook/codemod) designed to blend any javascript codebase to my tyrannical desires. Codemods here will re-factor pieces of javascript code to adhere to certain programming practices that I think are better than others. Please check the documentation for each codemod to understand what it is supposed to do.",
-    "directories": {
-        "lib": "src"
-    },
-    "files": [
-        "src"
-    ],
-    "scripts": {
-        "test": "jest",
-        "lint": "eslint src",
-        "execute": "node src/bin/cli.js",
-        "add-test-fixture": "node ./scripts/add-test-fixture.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/danielo515/codemods.git"
-    },
-    "bin": "src/bin/cli.js",
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/danielo515/codemods/issues"
-    },
-    "homepage": "https://github.com/danielo515/codemods#readme",
-    "dependencies": {
-        "fs-extra": "^10.0.0",
-        "ignore": "^5.1.9",
-        "inquirer": "^8.2.0",
-        "inquirer-fuzzy-path": "^2.3.0",
-        "jscodeshift": "0.11.0",
-        "jscodeshift-add-imports": "^1.0.10"
-    },
-    "devDependencies": {
-        "@types/jest": "^26.0.23",
-        "@types/jscodeshift": "^0.11.2",
-        "eslint": "^7.15.0",
-        "jest": "^27.0.1",
-        "jscodeshift-helper": "^1.1.0",
-        "ts-jest": "^27.0.3",
-        "ts-node": "^10.0.0",
-        "typescript": "^4.3.2"
-    }
+  "name": "danielo-mod",
+  "version": "1.4.1",
+  "description": "This is a collection of [ codemods ](https://github.com/facebook/codemod) designed to blend any javascript codebase to my tyrannical desires. Codemods here will re-factor pieces of javascript code to adhere to certain programming practices that I think are better than others. Please check the documentation for each codemod to understand what it is supposed to do.",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src",
+    "execute": "node src/bin/cli.js",
+    "add-test-fixture": "node ./scripts/add-test-fixture.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielo515/codemods.git"
+  },
+  "bin": "src/bin/cli.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielo515/codemods/issues"
+  },
+  "homepage": "https://github.com/danielo515/codemods#readme",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "ignore": "^5.1.9",
+    "inquirer": "^8.2.0",
+    "inquirer-fuzzy-path": "^2.3.0",
+    "jscodeshift": "0.11.0",
+    "jscodeshift-add-imports": "^1.0.10"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/jscodeshift": "^0.11.2",
+    "eslint": "^7.15.0",
+    "jest": "^27.0.1",
+    "jscodeshift-helper": "^1.1.0",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  }
 }

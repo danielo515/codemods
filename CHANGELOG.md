@@ -1,3 +1,12 @@
+## [1.4.1](https://github.com/danielo515/codemods/compare/v1.4.0...v1.4.1) (2021-11-16)
+
+
+### Bug Fixes
+
+* correct version of jscodeshift ([dd135df](https://github.com/danielo515/codemods/commit/dd135df2469674af58611be363af946933134e38))
+
+
+
 # [1.4.0](https://github.com/danielo515/codemods/compare/v1.3.5...v1.4.0) (2021-11-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * workflows ([119b6ed](https://github.com/danielo515/codemods/commit/119b6edfd835a16ccf78b9e62bbf7ab4ea71d48a))
-
-
-
-## [1.3.1](https://github.com/danielo515/codemods/compare/v1.3.0...v1.3.1) (2021-11-11)
-
-
-### Bug Fixes
-
-* please publish this thing ([60176d8](https://github.com/danielo515/codemods/commit/60176d86f79f93a4a0284c6d822210e8955314e1))
 
 
 
