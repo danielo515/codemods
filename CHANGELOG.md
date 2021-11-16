@@ -1,3 +1,12 @@
+## [1.4.2](https://github.com/danielo515/codemods/compare/v1.4.1...v1.4.2) (2021-11-16)
+
+
+### Bug Fixes
+
+* remove from props ([5007b39](https://github.com/danielo515/codemods/commit/5007b39737c6c97c1744d4d0c4b7edadbfc18877))
+
+
+
 ## [1.4.1](https://github.com/danielo515/codemods/compare/v1.4.0...v1.4.1) (2021-11-16)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * take the parser into account ([059258e](https://github.com/danielo515/codemods/commit/059258e227c7743cb278590d7d9f93b4d29d72a4))
-
-
-
-## [1.3.2](https://github.com/danielo515/codemods/compare/v1.3.1...v1.3.2) (2021-11-11)
-
-
-### Bug Fixes
-
-* workflows ([119b6ed](https://github.com/danielo515/codemods/commit/119b6edfd835a16ccf78b9e62bbf7ab4ea71d48a))
 
 
 
