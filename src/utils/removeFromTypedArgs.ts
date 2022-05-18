@@ -28,14 +28,21 @@ export const removeFromTypedArgs =
         if (!path.node.params.length) return;
         const removeProp = (name) => (path) => {
             j(path).find(j.ObjectTypeProperty, { key: { name } }).remove();
+            const ts = j(path).find(j.TSPropertySignature, { key: { name } });
+            ts.remove();
         };
-        j(path as ASTPath<ASTNode>)
+        const iterator = (typeToFind) => (annotation) => {
+            const name = annotation.value.name;
+            root.find(typeToFind, { id: { name } }).forEach(
+                removeProp(typeName)
+            );
+        };
+        j(path as ASTPath<ASTNode>) // Flow style
             .find(j.GenericTypeAnnotation)
             .find(j.Identifier)
-            .forEach((annotation) => {
-                const name = annotation.value.name;
-                root.find(j.TypeAlias, { id: { name } }).forEach(
-                    removeProp(typeName)
-                );
-            });
+            .forEach(iterator(j.TypeAlias));
+        j(path as ASTPath<ASTNode>) // Typescript style
+            .find(j.TSTypeAnnotation)
+            .find(j.Identifier)
+            .forEach(iterator(j.TSTypeAliasDeclaration));
     };
