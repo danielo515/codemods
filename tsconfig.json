@@ -2,7 +2,12 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "module": "commonjs",
-    "target": "es2015"
+    "target": "es2015",
+    "types": [
+      "@types/jscodeshift",
+      "@types/jest",
+      "@types/node"
+    ]
   },
   "exclude": [
     "src/**/__testfixtures__"

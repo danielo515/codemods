@@ -1,2 +1,2 @@
 src/mods/__testfixtures__
-src/mods/__test__
+src/mods/__test__/*.js

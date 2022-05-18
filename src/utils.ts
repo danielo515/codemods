@@ -1,23 +1,20 @@
 import {
+    ASTPath,
     Collection,
     ImportDeclaration,
     JSCodeshift,
     ObjectPattern,
 } from 'jscodeshift';
 
-const { parse } = require('recast');
-/** @typedef {import('jscodeshift').ImportDeclaration} ImportDeclaration */
-/** @typedef {import('jscodeshift').JSCodeshift} JSCodeshift */
+import { parse } from 'recast';
 
-export const getFirstNode = (j, root) =>
+export const getFirstNode = (j, root: Collection<*>) =>
     root.find(j.Program).get('body', 0).node;
 
 /**
- *
- *
- * @param {import('jscodeshift').ASTPath<*>} path
+ * Removes any path but keeps the comments it may have below or top
  */
-export function removePreservingComments(path) {
+export function removePreservingComments(path: ASTPath<any>) {
     const comments = path.node.comments;
     if (comments && comments.length) path.parent.node.comments = comments;
     path.prune();
@@ -32,7 +29,7 @@ export function removePreservingComments(path) {
  * @param {import('jscodeshift').Collection} root
  * @param {JSCodeshift} j
  */
-export function getImportsOfIdentifiers(identifiers, root, j) {
+export function getImportsOfIdentifiers(identifiers: string[], root: Collection, j: JSCodeshift) {
     return root
         .find(j.ImportDeclaration)
         .filter((declaration) =>
