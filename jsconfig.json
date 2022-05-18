@@ -1,9 +1,0 @@
-{
-    "typeAcquisition": { "enable": true },
-    "compilerOptions": {
-        "checkJs": true,
-        "module": "commonjs",
-        "target": "es2015"
-    },
-    "exclude": ["src/mods/__testfixtures__"]
-}

@@ -24,25 +24,25 @@ import {
  */
 export const removeFromTypedArgs =
     (j: JSCodeshift, root: Collection<any>, typeName: string) =>
-    (path: ASTPath<Function>) => {
-        if (!path.node.params.length) return;
-        const removeProp = (name) => (path) => {
-            j(path).find(j.ObjectTypeProperty, { key: { name } }).remove();
-            const ts = j(path).find(j.TSPropertySignature, { key: { name } });
-            ts.remove();
+        (path: ASTPath<Function>) => {
+            if (!path.node.params.length) return;
+            const removeProp = (name) => (path) => {
+                j(path).find(j.ObjectTypeProperty, { key: { name } }).remove();
+                const ts = j(path).find(j.TSPropertySignature, { key: { name } });
+                ts.remove();
+            };
+            const iterator = (typeToFind) => (annotation) => {
+                const name = annotation.value.name;
+                root.find(typeToFind, { id: { name } }).forEach(
+                    removeProp(typeName)
+                );
+            };
+            j(path as ASTPath<ASTNode>) // Flow style
+                .find(j.GenericTypeAnnotation)
+                .find(j.Identifier)
+                .forEach(iterator(j.TypeAlias));
+            j(path as ASTPath<ASTNode>) // Typescript style
+                .find(j.TSTypeAnnotation)
+                .find(j.Identifier)
+                .forEach(iterator(j.TSTypeAliasDeclaration));
         };
-        const iterator = (typeToFind) => (annotation) => {
-            const name = annotation.value.name;
-            root.find(typeToFind, { id: { name } }).forEach(
-                removeProp(typeName)
-            );
-        };
-        j(path as ASTPath<ASTNode>) // Flow style
-            .find(j.GenericTypeAnnotation)
-            .find(j.Identifier)
-            .forEach(iterator(j.TypeAlias));
-        j(path as ASTPath<ASTNode>) // Typescript style
-            .find(j.TSTypeAnnotation)
-            .find(j.Identifier)
-            .forEach(iterator(j.TSTypeAliasDeclaration));
-    };

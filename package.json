@@ -11,6 +11,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint src",
+    "type-check": "tsc --noEmit",
     "execute": "node src/bin/cli.js",
     "add-test-fixture": "node ./scripts/add-test-fixture.js"
   },
@@ -37,6 +38,8 @@
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/jscodeshift": "^0.11.2",
+    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^7.15.0",
     "jest": "^27.0.1",
     "jscodeshift-helper": "^1.1.0",
