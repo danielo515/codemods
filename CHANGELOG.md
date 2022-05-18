@@ -1,3 +1,12 @@
+# [1.5.0](https://github.com/danielo515/codemods/compare/v1.4.2...v1.5.0) (2022-05-18)
+
+
+### Features
+
+* handle flow and ts style in removeFromTypedArgs ([eb63592](https://github.com/danielo515/codemods/commit/eb635920ba253c783227747ad7491f660ccce8d8))
+
+
+
 ## [1.4.2](https://github.com/danielo515/codemods/compare/v1.4.1...v1.4.2) (2021-11-16)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * tsx should include js files ([9d648f7](https://github.com/danielo515/codemods/commit/9d648f7fb3177aaec956bf219369ff2668378692))
-
-
-
-## [1.3.3](https://github.com/danielo515/codemods/compare/v1.3.2...v1.3.3) (2021-11-11)
-
-
-### Bug Fixes
-
-* take the parser into account ([059258e](https://github.com/danielo515/codemods/commit/059258e227c7743cb278590d7d9f93b4d29d72a4))
 
 
 
