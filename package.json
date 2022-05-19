@@ -13,7 +13,8 @@
     "lint": "eslint src",
     "type-check": "tsc --noEmit",
     "execute": "node src/bin/cli.js",
-    "add-test-fixture": "node ./scripts/add-test-fixture.js"
+    "add-test-fixture": "node ./scripts/add-test-fixture.js",
+    "execute-ts": "jscodeshift --parser=ts --extensions=ts"
   },
   "repository": {
     "type": "git",

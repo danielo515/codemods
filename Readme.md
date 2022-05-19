@@ -12,6 +12,21 @@ npx danielo-mod mod-name --firstArgument=value --parser=flow your/source/code/pa
 
 If you don't use flow, just remove `--parser=flow`
 
+
+### Local execution
+
+If you want to execute a codemod locally (you have this repo cloned and just want to run from here) you can do it providing all the required parameters to jscodeshift:
+
+```bash
+yarn jscodeshift -t src/mods/transform-file.ts /full/path/to/target-files
+```
+
+There is a convenience script if you want to run a typescript transformation (provides correct parser and extensions list):
+
+```bash
+yarn execute-ts -t src/mods/transform-file.ts /full/path/to/target-files
+```
+
 ## CODEMODS
 
 ### named-function-params
