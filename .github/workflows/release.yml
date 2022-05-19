@@ -9,14 +9,14 @@ on:
             - master
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v1
-              with:
-                  node-version: 12
-            - run: yarn
+    # build:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - uses: actions/checkout@v2
+    #         - uses: actions/setup-node@v1
+    #           with:
+    #               node-version: 12
+    #         - run: yarn
             # - run: yarn test
 
     bump:
@@ -26,13 +26,17 @@ jobs:
             - uses: actions/checkout@v2
             - name: Conventional Changelog Action
               uses: TriPSs/conventional-changelog-action@v3
+              id: changelog
               with:
                   github-token: ${{ secrets.github_token }}
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
                   registry-url: https://registry.npmjs.org/
-            - run: yarn
-            - run: yarn publish
+            - name: Install deps
+              run: yarn
+            - name: Publish to NPM
+              run: yarn publish
+              if: ${{ steps.changelog.outputs.skipped == 'false' }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.npm_token}}
