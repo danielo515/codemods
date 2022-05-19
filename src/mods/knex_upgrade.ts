@@ -1,5 +1,11 @@
-import { API, FileInfo } from 'jscodeshift';
+import { API, FileInfo, FunctionExpression, JSCodeshift } from 'jscodeshift';
 const addImports = require('jscodeshift-add-imports');
+
+const convertToAsyncKnex = (j:JSCodeshift, originalFn: FunctionExpression, functionName: string) => {
+    const newFunction = j.template.statement`export async function ${functionName}(knex: Knex): Promise<void> {}`;
+    newFunction.declaration.body = originalFn.body;
+    return newFunction;
+};
 
 /**
  * Replace a HOC with a call to a corresponding hook
@@ -17,12 +23,9 @@ module.exports = function transformer(
         .forEach(path => {
             if(j.Identifier.check(path.value.property))
             {
-                if(path.value.property.name === 'seed') {
+                if((/seed|up|down/).test(path.value.property.name)) {
                     if(j.FunctionExpression.check(path.parent.value.right)){
-                        const funBody = (path.parent.value.right.body);
-                        const newFunction = j.template.statement`export async function seed(knex: Knex): Promise<void> {}`;
-                        newFunction.declaration.body = funBody;
-                        j(path.parent).replaceWith(newFunction);
+                        j(path.parent).replaceWith(convertToAsyncKnex(j,path.parent.value.right, path.value.property.name));
                     }
                 }
             }
