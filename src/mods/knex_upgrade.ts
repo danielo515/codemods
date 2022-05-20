@@ -1,5 +1,6 @@
 import { API, FileInfo, FunctionExpression, JSCodeshift } from 'jscodeshift';
-const addImports = require('jscodeshift-add-imports');
+import addImports from 'jscodeshift-add-imports';
+import { pathIsFunction } from '../utils/findFunctionNamed';
 
 const convertToAsyncKnex = (j:JSCodeshift, originalFn: FunctionExpression, functionName: string) => {
     const newFunction = j.template.statement`export async function ${functionName}(knex: Knex): Promise<void> {}`;
@@ -24,7 +25,8 @@ module.exports = function transformer(
             if(j.Identifier.check(path.value.property))
             {
                 if((/seed|up|down/).test(path.value.property.name)) {
-                    if(j.FunctionExpression.check(path.parent.value.right)){
+                    const rightSide = path.parent.value.right;
+                    if(j.ArrowFunctionExpression.check(rightSide) || j.FunctionExpression.check(rightSide)){
                         j(path.parent).replaceWith(convertToAsyncKnex(j,path.parent.value.right, path.value.property.name));
                     }
                 }
