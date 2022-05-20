@@ -1,10 +1,7 @@
 import { API, FileInfo, Options } from 'jscodeshift';
 import { failIfMissing } from '../utils/failIfMissing';
-/**
- * This code-mod allows you to add a property to those component calls that do not include it.
- * Useful for deprecating/removing default values
- */
-module.exports = function transformer(
+
+export default function transformer(
     file: FileInfo,
     api: API,
     options: Options

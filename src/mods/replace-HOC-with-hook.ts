@@ -6,12 +6,9 @@ import { createObjectPattern, isUsed, removeFromImport } from '../utils';
 import { failIfMissing } from '../utils/failIfMissing';
 import { removeFromObj } from '../utils/removeObjectArgument';
 import { removeFromTypedArgs } from '../utils/removeFromTypedArgs';
-const addImports = require('jscodeshift-add-imports');
+import addImports from 'jscodeshift-add-imports';
 
-/**
- * Replace a HOC with a call to a corresponding hook
- */
-module.exports = function transformer(
+export default function transformer(
     file: FileInfo,
     api: API,
     options: Options
@@ -86,4 +83,4 @@ module.exports = function transformer(
         removeFromImport(root.find(j.ImportDeclaration), hocName, j);
     }
     return root.toSource();
-};
+}

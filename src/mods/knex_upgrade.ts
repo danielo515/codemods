@@ -1,6 +1,5 @@
 import { API, FileInfo, FunctionExpression, JSCodeshift } from 'jscodeshift';
 import addImports from 'jscodeshift-add-imports';
-import { pathIsFunction } from '../utils/findFunctionNamed';
 
 const convertToAsyncKnex = (j:JSCodeshift, originalFn: FunctionExpression, functionName: string) => {
     const newFunction = j.template.statement`export async function ${functionName}(knex: Knex): Promise<void> {}`;
@@ -8,10 +7,7 @@ const convertToAsyncKnex = (j:JSCodeshift, originalFn: FunctionExpression, funct
     return newFunction;
 };
 
-/**
- * Replace a HOC with a call to a corresponding hook
- */
-module.exports = function transformer(
+export default function transformer(
     file: FileInfo,
     api: API,
     // options: Options
@@ -24,7 +20,7 @@ module.exports = function transformer(
         .forEach(path => {
             if(j.Identifier.check(path.value.property))
             {
-                if((/seed|up|down/).test(path.value.property.name)) {
+                if(((((((/seed|up|down/)))))).test(path.value.property.name)) {
                     const rightSide = path.parent.value.right;
                     if(j.ArrowFunctionExpression.check(rightSide) || j.FunctionExpression.check(rightSide)){
                         j(path.parent).replaceWith(convertToAsyncKnex(j,path.parent.value.right, path.value.property.name));
@@ -34,4 +30,4 @@ module.exports = function transformer(
 
         });
     return exportRoot.toSource();
-};
+}

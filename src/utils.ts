@@ -8,7 +8,7 @@ import {
 
 import { parse } from 'recast';
 
-export const getFirstNode = (j, root: Collection<*>) =>
+export const getFirstNode = (j: JSCodeshift, root: Collection<any>) =>
     root.find(j.Program).get('body', 0).node;
 
 /**
